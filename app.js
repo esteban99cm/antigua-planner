@@ -103,7 +103,7 @@ function buildDay(i) {
 }
 
 // ───────────────────────── fotos ─────────────────────────
-const pic = (k, cls = '', eager = false) => k && PHOTOS[k] ? `<img class="${cls}" src="${IMG(k)}" alt="${esc(PHOTOS[k].cap)}" style="object-position:${PHOTOS[k].pos}" ${eager ? '' : 'loading="lazy"'} decoding="async">` : '';
+const pic = (k, cls = '', eager = false) => k && PHOTOS[k] ? `<img class="${cls}" src="${IMG(k)}" alt="${esc(PHOTOS[k].cap)}" style="object-position:${PHOTOS[k].pos}" ${eager ? '' : 'loading="lazy"'} decoding="async" onerror="const f=this.closest('figure');if(f)f.classList.add('empty');this.remove()">` : '';
 const ZONE_LABEL = { Antigua: 'Antigua', Lago: 'Atitlán', Volcán: 'Acatenango', Ruta: 'Ruta' };
 
 // ───────────────────────── render ─────────────────────────
@@ -193,7 +193,10 @@ function rOverview() {
     ${secH('05', 'Para tener a mano')}
     <dl class="practical">${PRACTICAL.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
   </section>
-  <p class="credit mono">Fotos propias del viaje de reconocimiento.</p>`;
+  <section class="credits">${secH('—', 'Créditos de fotos')}
+    <p class="small muted">Las fotos sin crédito son propias, del viaje de reconocimiento. Las demás vienen de Wikimedia Commons con licencia libre:</p>
+    <ul>${Object.entries(PHOTOS).filter(([, p]) => p.by).map(([, p]) => `<li>${esc(p.cap)} — ${esc(p.by)} · <a href="${p.src}" target="_blank" rel="noopener">${esc(p.lic)}</a></li>`).join('')}</ul>
+  </section>`;
 }
 const rFlight = (f, dir, on) => `<button class="flight ${on ? 'on' : ''}" data-act="flight" data-dir="${dir}" data-v="${f.id}">
   <span class="fl-air">${esc(f.air)} ${esc(f.code)}${f.rec ? ' <i>sugerido</i>' : ''}</span>

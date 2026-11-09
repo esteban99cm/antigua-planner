@@ -14,3 +14,6 @@ Diseño: fotos propias del viaje de reconocimiento (sin EXIF ni GPS). Paleta sac
 Los cambios (vuelo elegido, días editados, guardados, equipo y reservas) se guardan en `localStorage`.
 
 Sin build: HTML + CSS + JS. `python3 -m http.server` para verlo en local. Datos editables en `data.js`. Precios investigados el 9 nov 2026: confirmar antes de comprar.
+
+## Fotos de Wikimedia Commons
+Los lugares sin foto propia usan imágenes de Wikimedia Commons con licencia libre (CC BY, CC BY-SA o CC0). Se cargan desde Commons y su autor y licencia aparecen en Resumen → Créditos de fotos. La lista está en `PHOTOS` dentro de `data.js`.

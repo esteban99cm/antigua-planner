@@ -318,3 +318,8 @@ button.btn::after { content: none; }
   .mnav button.on { color: var(--ink); } .mnav button.on svg { stroke: var(--lava); }
 }
 @media (max-width: 400px) { .hero h1 { font-size: 54px; } .tops { grid-template-columns: 1fr; } }
+
+.credits ul { margin: 0; padding: 0; list-style: none; font: 400 12px/1.6 var(--fm); color: var(--muted); }
+.credits li { padding: 4px 0; border-bottom: 1px solid var(--line2); }
+.credits a { color: var(--ink); }
+figure.empty { background: repeating-linear-gradient(135deg, var(--paper2) 0 8px, transparent 8px 16px); }
