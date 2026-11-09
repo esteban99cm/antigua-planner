@@ -1,4 +1,4 @@
-# Antigua Planner · 8 — 13 dic 2026
+# Antigua Planner · 15 — 20 dic 2026
 
 Planificador de un viaje en solitario desde San José (Costa Rica) a Antigua Guatemala: una noche en el lago Atitlán y Acatenango con cima al amanecer.
 
