@@ -84,7 +84,7 @@ const inDay = (i, id) => dayActs(i).some(([pid]) => pid === id);
 function connect(a, b) {
   if (a.cat === 'Traslado' || b.cat === 'Traslado' || a.id === b.id) return null;
   const d = km(a, b);
-  if (a.zone === 'Volcán' || b.zone === 'Volcán') return { mode: 'trail', min: 0, km: d, cost: 0, label: 'SENDERO', sub: kmTxt(d) };
+  if (a.zone === 'Volcán' || b.zone === 'Volcán') return { mode: 'trail', min: 0, km: d, cost: 0, label: '', sub: kmTxt(d) };
   if (d <= 1.8) { const min = Math.max(3, Math.round(d / 4.2 * 60)); return { mode: 'walk', min, km: d, cost: 0, label: min + ' min a pie', sub: kmTxt(d), url: dirUrl(a, b) }; }
   if (d <= 7) { const min = Math.round(5 + d * 2.5); return { mode: 'tuk', min, km: d, cost: 2.5, label: '~' + min + ' min tuk-tuk', sub: 'Q15–40 · ' + kmTxt(d), url: dirUrl(a, b, 'driving') }; }
   const min = Math.round(10 + d * 1.6), cost = Math.round(4 + d * 0.9);
@@ -102,52 +102,25 @@ function buildDay(i) {
   return { ...D, i, num: i + 1, rows, walk, spend, sun: sunTimes(D.date, D.where), label: dayLabel(D.date), dow: dow(D.date) };
 }
 
-// ───────────────────────── ilustraciones (SVG propio) ─────────────────────────
-// Agua (cono), Acatenango (doble cima) y Fuego con penacho: la silueta que se ve desde Antigua.
-let gid = 0;
-const VOLCANES = (cls = '') => { const g = 'sky' + (++gid); return `<svg class="ill ${cls}" viewBox="0 0 800 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
-  <defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sky1)"/><stop offset="1" stop-color="var(--sky2)"/></linearGradient></defs>
-  <rect width="800" height="300" fill="url(#${g})"/>
-  <circle cx="610" cy="78" r="34" fill="var(--sun)"/>
-  <path d="M-10 300 L150 120 Q168 104 186 120 L360 300Z" fill="var(--v3)"/>
-  <path d="M300 300 L455 112 L478 98 L500 118 L520 104 L548 132 L700 300Z" fill="var(--v2)"/>
-  <path d="M520 300 L640 150 Q652 140 664 150 L810 300Z" fill="var(--v1)"/>
-  <path class="plume" d="M652 146 C640 120 668 108 650 86 C636 70 664 58 652 40" stroke="var(--plume)" stroke-width="14" fill="none" stroke-linecap="round" opacity=".55"/>
-  <path class="lava" d="M652 150 L646 176 L652 190 L644 214" stroke="var(--lava)" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M0 300 L0 262 Q200 240 400 258 T800 250 L800 300Z" fill="var(--hill)"/>
-</svg>`; };
-// Arco de Santa Catalina con su torre del reloj.
-const ARCO = `<svg class="arco" viewBox="0 0 260 220" aria-hidden="true">
-  <rect x="0" y="70" width="260" height="150" fill="var(--ocre)"/>
-  <rect x="0" y="62" width="260" height="10" fill="var(--almagre)"/>
-  <path d="M60 220 L60 140 A70 70 0 0 1 200 140 L200 220Z" fill="var(--bg)"/>
-  <rect x="104" y="16" width="52" height="54" fill="var(--ocre)"/><path d="M98 18 L130 0 L162 18Z" fill="var(--almagre)"/>
-  <circle cx="130" cy="42" r="14" fill="var(--paper)"/><path d="M130 42 L130 33 M130 42 L137 45" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
-  <g fill="var(--paper)" opacity=".85"><rect x="18" y="96" width="22" height="34" rx="11"/><rect x="220" y="96" width="22" height="34" rx="11"/></g>
-</svg>`;
-const LAGO = `<svg class="ill" viewBox="0 0 800 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-  <rect width="800" height="300" fill="var(--sky2)"/>
-  <circle cx="200" cy="90" r="28" fill="var(--sun)"/>
-  <path d="M60 210 L210 80 L330 210Z" fill="var(--v3)"/><path d="M280 210 L420 110 L470 130 L560 210Z" fill="var(--v2)"/><path d="M500 210 L640 70 L780 210Z" fill="var(--v1)"/>
-  <rect y="208" width="800" height="92" fill="var(--anil)"/>
-  <g stroke="var(--paper)" stroke-width="3" stroke-linecap="round" opacity=".5"><path d="M80 236h90M260 250h140M520 232h110M620 268h120M140 280h80"/></g>
-</svg>`;
-const ZONE_ILL = { Antigua: () => VOLCANES(), Lago: () => LAGO, Volcán: () => VOLCANES('night'), Ruta: () => VOLCANES() };
+// ───────────────────────── fotos ─────────────────────────
+const pic = (k, cls = '', eager = false) => k && PHOTOS[k] ? `<img class="${cls}" src="${IMG(k)}" alt="${esc(PHOTOS[k].cap)}" style="object-position:${PHOTOS[k].pos}" ${eager ? '' : 'loading="lazy"'} decoding="async">` : '';
+const ZONE_LABEL = { Antigua: 'Antigua', Lago: 'Atitlán', Volcán: 'Acatenango', Ruta: 'Ruta' };
 
 // ───────────────────────── render ─────────────────────────
-const MNAV = [['overview', 'Resumen', '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'], ['planner', 'Plan', '<path d="M4 5h16M4 12h16M4 19h10"/>'], ['explore', 'Explorar', '<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-4 2 2-6z"/>'], ['photo', 'Foto', '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'], ['volcano', 'Volcán', '<path d="M2 21l7-12 3 4 3-6 7 14z"/><path d="M13 4c0-1 1-2 2-2"/>'], ['book', 'Reservas', '<path d="M5 3h14v18l-7-4-7 4z"/>']];
+const MNAV = [['overview', 'Resumen', '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'], ['planner', 'Plan', '<path d="M4 5h16M4 12h16M4 19h10"/>'], ['explore', 'Explorar', '<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-4 2 2-6z"/>'], ['photo', 'Foto', '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'], ['volcano', 'Volcán', '<path d="M2 21l7-12 3 4 3-6 7 14z"/>'], ['book', 'Reservas', '<path d="M5 3h14v18l-7-4-7 4z"/>']];
 
 function render() {
   document.documentElement.dataset.theme = isDark() ? 'dark' : 'light';
-  $('meta[name="theme-color"]').setAttribute('content', isDark() ? '#15131F' : '#F6EFE3');
-  $('#themeLabel').textContent = isDark() ? 'DÍA' : 'NOCHE';
-  $('#nav').innerHTML = SCREENS.map(([k, l]) => `<button data-go="${k}" class="${S.screen === k ? 'on' : ''}">${l}</button>`).join('');
+  $('meta[name="theme-color"]').setAttribute('content', isDark() ? '#0B0D16' : '#F3F1EC');
+  $('#themeLabel').textContent = isDark() ? 'Día' : 'Noche';
+  $('#nav').innerHTML = SCREENS.map(([k, l], n) => `<button data-go="${k}" class="${S.screen === k ? 'on' : ''}"><i>0${n + 1}</i>${l}</button>`).join('');
   $('#mnav').innerHTML = MNAV.map(([k, l, ic]) => `<button data-go="${k}" class="${S.screen === k ? 'on' : ''}"><svg viewBox="0 0 24 24">${ic}</svg><span>${l}</span></button>`).join('');
   const R = { overview: rOverview, planner: rPlanner, explore: rExplore, photo: rPhoto, volcano: rVolcano, book: rBook }[S.screen];
   $('#view').className = 'view v-' + S.screen;
   $('#view').innerHTML = R();
   if (S.screen === 'planner') mountMap();
 }
+const secH = (n, title, extra = '') => `<header class="sec-h"><span class="num">${n}</span><h2>${title}</h2>${extra}</header>`;
 
 function budgetTotals() {
   const usdT = BUDGET.reduce((s, b) => s + b[S.plan], 0);
@@ -158,79 +131,88 @@ function rOverview() {
   const o = outF(), b = backF(), { usdT, crcT } = budgetTotals();
   const lo = TRIP.budget.min, hi = TRIP.budget.max, scaleMax = Math.max(hi * 1.4, crcT * 1.05);
   const pos = (v) => Math.min(100, v / scaleMax * 100);
-  const state = crcT <= lo ? 'ok' : crcT <= hi ? 'ok' : crcT <= hi * 1.1 ? 'warn' : 'over';
+  const state = crcT <= hi ? 'ok' : crcT <= hi * 1.1 ? 'warn' : 'over';
   const days = DAYS.map((_, i) => buildDay(i));
   const daysLeft = Math.ceil((Date.parse(TRIP.start + 'T00:00:00-06:00') - Date.now()) / 864e5);
   return `
   <section class="hero">
-    ${VOLCANES('hero-ill')}
+    <figure class="hero-img">${pic('fuego-noche', '', true)}</figure>
     <div class="hero-txt">
-      <p class="kicker">Viaje en solitario · ${daysLeft > 0 ? 'faltan ' + daysLeft + ' días' : 'en curso'}</p>
-      <h1>Antigua,<br><em>lago y volcán</em></h1>
-      <p class="lede">Seis días entre la ciudad colonial, una noche a orillas del Atitlán y el amanecer en la cima del Acatenango con el Fuego erupcionando debajo.</p>
-      <div class="hero-facts">
-        <span><b>8–13</b> diciembre</span><span><b>5</b> noches</span><span><b>3 976</b> m de cima</span><span><b>${crc(crcT)}</b> estimado</span>
-      </div>
+      <p class="kicker">Viaje en solitario${daysLeft > 0 ? ' — faltan ' + daysLeft + ' días' : ''}</p>
+      <h1>Antigua<br>Atitlán<br><span>Acatenango</span></h1>
+      <p class="lede">Seis días entre la ciudad colonial, una noche a orillas del lago y el amanecer en la cima del Acatenango con el Fuego erupcionando debajo.</p>
+      <dl class="hero-facts">
+        <div><dt>Fechas</dt><dd>8–13 dic</dd></div><div><dt>Noches</dt><dd>5</dd></div><div><dt>Cima</dt><dd>3 976 m</dd></div><div><dt>Estimado</dt><dd>${crc(crcT)}</dd></div>
+      </dl>
     </div>
+    <figcaption>${esc(PHOTOS['fuego-noche'].cap)}</figcaption>
+  </section>
+
+  <section>
+    ${secH('01', 'El viaje', '<button class="link" data-go="planner">Abrir el plan</button>')}
+    <div class="route">${days.map((d) => `<button class="rday z-${d.where}" data-act="openday" data-i="${d.i}">
+      <figure>${pic(d.photo)}</figure>
+      <div class="rtxt"><span class="rdate">${String(d.num).padStart(2, '0')} · ${d.dow} ${d.label}</span><b>${esc(d.title)}</b><span class="rnight">Noche: ${esc(d.night)}</span></div></button>`).join('')}</div>
   </section>
 
   <section class="grid2">
-    <div class="card">
-      <div class="card-h"><h2>Vuelos</h2><span class="tag warn">POR CONFIRMAR</span></div>
+    <div class="panel">
+      ${secH('02', 'Vuelos', '<span class="tag warn">Por confirmar</span>')}
       <p class="muted small">Directos SJO ⇄ GUA, ~1 h 35, misma hora en los dos países. Volaris dejó la ruta en abril de 2026. ${esc(FLIGHTS.price)}</p>
       <h3 class="sub">Ida · martes 8</h3>
       <div class="flights">${FLIGHTS.out.map((f) => rFlight(f, 'out', S.out === f.id)).join('')}</div>
       <h3 class="sub">Regreso · domingo 13</h3>
       <div class="flights">${FLIGHTS.back.map((f) => rFlight(f, 'back', S.back === f.id)).join('')}</div>
-      <p class="small">Elige el vuelo que compres: el día 1 y el día 6 del plan se reacomodan solos.</p>
-      <div class="links">${FLIGHTS.book.map((l) => `<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)} ↗</a>`).join('')}</div>
-      <p class="tiny muted">Seleccionado: ${esc(o.air)} ${esc(o.code)} ${o.dep}→${o.arr} · ${esc(b.air)} ${esc(b.code)} ${b.dep}→${b.arr}</p>
+      <p class="small">Marca el vuelo que compres: el día 1 y el día 6 del plan se reacomodan solos.</p>
+      <div class="links">${FLIGHTS.book.map((l) => `<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>
+      <p class="tiny muted mono">${esc(o.code)} ${o.dep}→${o.arr} / ${esc(b.code)} ${b.dep}→${b.arr}</p>
     </div>
 
-    <div class="card">
-      <div class="card-h"><h2>Presupuesto</h2>
-        <div class="seg">${[['lean', 'Ajustado'], ['comfy', 'Cómodo']].map(([k, l]) => `<button data-act="plan" data-v="${k}" class="${S.plan === k ? 'on' : ''}">${l}</button>`).join('')}</div>
-      </div>
-      <div class="total ${state}"><b>${crc(crcT)}</b><span>${usd(usdT)} · ${esc(TRIP.fx.note)}</span></div>
+    <div class="panel">
+      ${secH('03', 'Presupuesto', `<div class="seg">${[['lean', 'Ajustado'], ['comfy', 'Cómodo']].map(([k, l]) => `<button data-act="plan" data-v="${k}" class="${S.plan === k ? 'on' : ''}">${l}</button>`).join('')}</div>`)}
+      <div class="total ${state}"><b>${crc(crcT)}</b><span class="mono">${usd(usdT)} · ${esc(TRIP.fx.note)}</span></div>
       <div class="meter"><i class="range" style="left:${pos(lo)}%;width:${pos(hi) - pos(lo)}%"></i><i class="mark" style="left:${pos(crcT)}%"></i>
         <span style="left:${pos(lo)}%">₡300 mil</span><span style="left:${pos(hi)}%">₡400 mil</span></div>
       <table class="btable">${BUDGET.map((r) => `<tr><td>${esc(r.k)}<small>${esc(r.note)}</small></td><td>${usd(r[S.plan])}</td><td>${crc(r[S.plan] * TRIP.fx.crc)}</td></tr>`).join('')}</table>
-      <p class="small">${state === 'over' ? 'El escenario cómodo se pasa del tope: el vuelo de temporada alta y el hotel boutique todas las noches son lo que más pesa. Mezcla Airbnb con una noche boutique para quedar cerca de ₡400 mil.' : 'Dentro del rango si el vuelo sale en ~$300. Cada $50 de vuelo son ₡22 500.'}</p>
+      <p class="small">${state === 'over' ? 'El escenario cómodo se pasa del tope: lo que más pesa es el vuelo de temporada alta y el hotel boutique todas las noches. Si combinás Airbnb con una noche boutique quedás cerca de ₡400 mil.' : 'Dentro del rango si el vuelo sale en ~$300. Cada $50 de vuelo son ₡22 500.'}</p>
     </div>
   </section>
 
   <section>
-    <div class="sec-h"><h2>El viaje en seis días</h2><button class="link" data-go="planner">Abrir el plan →</button></div>
-    <div class="route">${days.map((d) => `<button class="rday z-${d.where}" data-act="openday" data-i="${d.i}">
-      <span class="rnum">${d.num}</span><span class="rdate">${d.dow} ${d.label}</span><b>${esc(d.title)}</b><span class="rkind">${esc(d.kind)}</span><span class="rnight">Noche: ${esc(d.night)}</span></button>`).join('')}</div>
+    ${secH('04', 'Imperdibles')}
+    <div class="tops">${TOP.map((t, k) => { const p = BY_ID[t.id]; return `<article class="must z-${p.zone}">${p.photo ? `<figure>${pic(p.photo)}</figure>` : '<figure class="empty"></figure>'}<div><span class="mono tnum">${k + 1}/${TOP.length}</span><h3>${esc(p.name)}</h3><p>${esc(t.why)}</p></div></article>`; }).join('')}</div>
+  </section>
+
+  <section class="mosaic">
+    <figure class="m1">${pic('catedral-ruinas')}<figcaption>${esc(PHOTOS['catedral-ruinas'].cap)}</figcaption></figure>
+    <figure class="m2">${pic('desayuno')}<figcaption>${esc(PHOTOS['desayuno'].cap)}</figcaption></figure>
+    <figure class="m3">${pic('rostro-maya')}<figcaption>${esc(PHOTOS['rostro-maya'].cap)}</figcaption></figure>
   </section>
 
   <section>
-    <div class="sec-h"><h2>Imperdibles</h2></div>
-    <div class="tops">${TOP.map((t, k) => { const p = BY_ID[t.id]; return `<div class="top z-${p.zone}"><span class="tnum">${k + 1}</span><div><b>${esc(p.name)}</b><p>${esc(t.why)}</p></div></div>`; }).join('')}</div>
-  </section>
-
-  <section class="card">
-    <div class="card-h"><h2>Para tener a mano</h2></div>
+    ${secH('05', 'Para tener a mano')}
     <dl class="practical">${PRACTICAL.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
-  </section>`;
+  </section>
+  <p class="credit mono">Fotos propias del viaje de reconocimiento.</p>`;
 }
 const rFlight = (f, dir, on) => `<button class="flight ${on ? 'on' : ''}" data-act="flight" data-dir="${dir}" data-v="${f.id}">
-  <span class="fl-air">${esc(f.air)} <b>${esc(f.code)}</b>${f.rec ? '<i>sugerido</i>' : ''}</span>
-  <span class="fl-time">${f.dep} <em>→</em> ${f.arr}</span><span class="fl-note">${esc(f.note)}</span></button>`;
+  <span class="fl-air">${esc(f.air)} ${esc(f.code)}${f.rec ? ' <i>sugerido</i>' : ''}</span>
+  <span class="fl-time">${f.dep}<em>—</em>${f.arr}</span><span class="fl-note">${esc(f.note)}</span></button>`;
 
 // ── Plan ──
 function rPlanner() {
   const D = buildDay(S.day);
   return `
-  <div class="days">${DAYS.map((d, i) => `<button class="dchip z-${d.where} ${S.day === i ? 'on' : ''}" data-act="day" data-i="${i}"><b>${i + 1}</b><span>${dow(d.date)} ${dayLabel(d.date)}</span></button>`).join('')}</div>
+  <div class="days">${DAYS.map((d, i) => `<button class="dchip z-${d.where} ${S.day === i ? 'on' : ''}" data-act="day" data-i="${i}"><b>${String(i + 1).padStart(2, '0')}</b><span>${dow(d.date)} ${dayLabel(d.date)}</span></button>`).join('')}</div>
   <div class="plan ${S.mview === 'map' ? 'show-map' : ''}">
     <div class="itin">
       <header class="dhead z-${D.where}">
-        <div class="dhead-ill">${ZONE_ILL[D.where]()}</div>
-        <div class="dhead-txt"><span class="stamp sm">${esc(D.kind)}</span><h2>${esc(D.title)}</h2>
-          <p class="meta"><span>☀ ${fmt(D.sun.sunrise)}</span><span>◐ ${fmt(D.sun.sunset)}</span><span>${kmTxt(D.walk)} a pie</span><span>~${usd(D.spend)} en el día</span><span>Noche: ${esc(D.night)}</span></p></div>
+        <figure>${pic(D.photo, '', true)}</figure>
+        <div class="dhead-txt"><span class="kicker">Día ${D.num} · ${esc(ZONE_LABEL[D.where])}</span><h2>${esc(D.title)}</h2></div>
       </header>
+      <dl class="meta">
+        <div><dt>Sol</dt><dd>${fmt(D.sun.sunrise)}–${fmt(D.sun.sunset)}</dd></div><div><dt>A pie</dt><dd>${kmTxt(D.walk)}</dd></div><div><dt>Gasto</dt><dd>~${usd(D.spend)}</dd></div><div><dt>Noche</dt><dd>${esc(D.night)}</dd></div>
+      </dl>
       ${D.note ? `<p class="note">${esc(D.note)}</p>` : ''}
       ${D.why ? `<p class="why"><b>Por qué este orden.</b> ${esc(D.why)}</p>` : ''}
       <div class="mtoggle"><button data-act="mview" data-v="list" class="${S.mview === 'list' ? 'on' : ''}">Lista</button><button data-act="mview" data-v="map" class="${S.mview === 'map' ? 'on' : ''}">Mapa</button></div>
@@ -244,19 +226,20 @@ function rPlanner() {
       <div class="mapbar"><button data-act="sat" class="${S.sat ? 'on' : ''}">Satélite</button><button data-act="fit">Encuadrar</button></div></div>
   </div>`;
 }
+const CONN_TAG = { walk: 'A pie', tuk: 'Tuk-tuk', uber: 'Uber', trail: 'Sendero' };
 function rRow(D, r) {
   const sel = S.sel === r.k, last = r.k === D.rows.length - 1;
-  return `<li class="row c-${r.cat === 'Traslado' ? 'tr' : 'act'} z-${r.zone} ${sel ? 'sel' : ''}" data-act="sel" data-k="${r.k}">
+  return `<li class="row ${r.cat === 'Traslado' ? 'tr' : ''} z-${r.zone} ${sel ? 'sel' : ''}" data-act="sel" data-k="${r.k}">
     <div class="time"><b>${r.t}</b><span>${fmt(r.end)}</span></div>
-    <div class="dot"><span>${r.num}</span></div>
     <div class="body">
-      <div class="r1"><b>${esc(r.name)}</b><span class="cat">${esc(r.cat)}</span>${r.cost ? `<span class="cost">${usd(r.cost)}</span>` : ''}</div>
+      <div class="r1"><b>${esc(r.name)}</b>${r.cost ? `<span class="cost">${usd(r.cost)}</span>` : ''}</div>
+      <span class="cat">${esc(r.cat)} · ${durTxt(r.dur)}</span>
       <p>${esc(r.desc)}</p>
-      ${sel ? `<div class="more">${r.tip ? `<p class="tip">${esc(r.tip)}</p>` : ''}${r.hours ? `<p class="tiny muted">Horario: ${esc(r.hours)} · ${durTxt(r.dur)}</p>` : `<p class="tiny muted">${durTxt(r.dur)}</p>`}
-        <div class="links"><a class="btn sm" href="${mapsUrl(r)}" target="_blank" rel="noopener">Google Maps ↗</a>${r.book ? `<a class="btn sm" href="${r.book}" target="_blank" rel="noopener">Reservar ↗</a>` : ''}
-        <button class="btn sm ghost" data-act="up" data-k="${r.k}" ${r.k === 0 ? 'disabled' : ''}>↑</button><button class="btn sm ghost" data-act="down" data-k="${r.k}" ${last ? 'disabled' : ''}>↓</button><button class="btn sm ghost" data-act="del" data-k="${r.k}">Quitar</button></div></div>` : ''}
+      ${sel ? `<div class="more">${r.photo ? `<figure class="rphoto">${pic(r.photo)}</figure>` : ''}${r.tip ? `<p class="tip">${esc(r.tip)}</p>` : ''}${r.hours ? `<p class="tiny muted mono">Horario ${esc(r.hours)}</p>` : ''}
+        <div class="links"><a class="btn sm" href="${mapsUrl(r)}" target="_blank" rel="noopener">Google Maps</a>${r.book ? `<a class="btn sm" href="${r.book}" target="_blank" rel="noopener">Reservar</a>` : ''}
+        <button class="btn sm ghost" data-act="up" data-k="${r.k}" ${r.k === 0 ? 'disabled' : ''} aria-label="Subir">↑</button><button class="btn sm ghost" data-act="down" data-k="${r.k}" ${last ? 'disabled' : ''} aria-label="Bajar">↓</button><button class="btn sm ghost" data-act="del" data-k="${r.k}">Quitar</button></div></div>` : ''}
     </div>
-  </li>${r.conn ? `<li class="conn m-${r.conn.mode}">${r.conn.url ? `<a href="${r.conn.url}" target="_blank" rel="noopener">${esc(r.conn.label)}</a>` : esc(r.conn.label)}<span>${esc(r.conn.sub)}</span></li>` : ''}`;
+  </li>${r.conn ? `<li class="conn"><span class="ctag">${CONN_TAG[r.conn.mode]}</span>${r.conn.url ? `<a href="${r.conn.url}" target="_blank" rel="noopener">${esc(r.conn.label)}</a>` : esc(r.conn.label)}<span>${esc(r.conn.sub)}</span></li>` : ''}`;
 }
 
 // ── Explorar ──
@@ -265,34 +248,33 @@ const matchF = (p) => { const f = activeF(); return f.every((k) => tagsOf(p).inc
 function rExplore() {
   const list = PLACES.filter((p) => p.cat !== 'Traslado' && p.cat !== 'Hotel').filter(matchF);
   return `
-  <div class="sec-h"><h1>Explorar</h1><span class="muted">${list.length} lugares</span></div>
+  ${secH('03', 'Explorar', `<span class="muted mono small">${list.length} lugares</span>`)}
   <div class="filters">${[...FILTERS, ['MIS', ['Guardados']]].map(([g, opts]) => `<div class="fg"><span>${g}</span>${opts.map((o) => `<button data-act="filter" data-v="${o}" class="chip ${S.filters[o] ? 'on' : ''}">${o}</button>`).join('')}</div>`).join('')}
     ${activeF().length ? '<button class="link" data-act="clearf">Limpiar</button>' : ''}</div>
   <div class="cards">${list.map((p) => {
     const saved = S.savedIds.includes(p.id), where = DAYS.map((_, i) => inDay(i, p.id) ? i + 1 : null).filter(Boolean);
-    return `<article class="pcard z-${p.zone}"><div class="pc-top"><span class="zone">${esc(p.zone)}</span><span class="cat">${esc(p.cat)}</span><span class="price">${esc(p.price)}</span></div>
+    return `<article class="pcard z-${p.zone} ${p.photo ? 'has-ph' : ''}">${p.photo ? `<figure>${pic(p.photo)}</figure>` : ''}<div class="pc-in"><div class="pc-top"><span class="zone">${esc(ZONE_LABEL[p.zone])}</span><span>${esc(p.cat)}</span><span class="price">${esc(p.price)}</span></div>
       <h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>${p.tip ? `<p class="tip">${esc(p.tip)}</p>` : ''}
-      <div class="pc-foot"><button class="btn sm ${saved ? 'on' : 'ghost'}" data-act="save" data-id="${p.id}">${saved ? '★ Guardado' : '☆ Guardar'}</button>
+      <div class="pc-foot"><button class="btn sm ${saved ? 'on' : 'ghost'}" data-act="save" data-id="${p.id}">${saved ? 'Guardado' : 'Guardar'}</button>
         <select data-act="addto" data-id="${p.id}" aria-label="Añadir a un día"><option value="">${where.length ? 'En día ' + where.join(', ') : 'Añadir a…'}</option>${DAYS.map((d, i) => `<option value="${i}">Día ${i + 1} · ${dow(d.date)} ${dayLabel(d.date)}</option>`).join('')}</select>
-        <a class="btn sm ghost" href="${mapsUrl(p)}" target="_blank" rel="noopener">Maps ↗</a></div></article>`;
+        <a class="link small" href="${mapsUrl(p)}" target="_blank" rel="noopener">Maps</a></div></div></article>`;
   }).join('')}</div>`;
 }
 
 // ── Modo foto ──
 function rPhoto() {
-  const zDay = (i) => DAYS[i].where;
   const f = Object.keys(S.photoF).filter((k) => S.photoF[k]);
   const spots = PHOTO_SPOTS.filter((s) => (S.photoDay == null || s.day === S.photoDay) && f.every((k) => s.tags.includes(k)))
     .map((s) => { const sun = sunTimes(DAYS[s.day].date, s.where), t = s.when in sun ? sun[s.when] : toMin(s.when); return { ...s, p: BY_ID[s.id], t, lab: SUN_LABEL[s.when] || 'Hora fija' }; })
     .sort((a, b) => a.day - b.day || a.t - b.t);
   return `
-  <div class="sec-h"><h1>Modo foto</h1><span class="muted">Sol calculado para cada día y lugar (UTC−6)</span></div>
-  <div class="suntable">${DAYS.map((d, i) => { const s = sunTimes(d.date, zDay(i)); return `<button class="sunday ${S.photoDay === i ? 'on' : ''}" data-act="pday" data-i="${i}"><b>${dow(d.date)} ${dayLabel(d.date)}</b><span>${esc(d.where)}</span>
+  ${secH('04', 'Modo foto', '<span class="muted mono small">Sol calculado por día y lugar · UTC−6</span>')}
+  <div class="suntable">${DAYS.map((d, i) => { const s = sunTimes(d.date, d.where); return `<button class="sunday ${S.photoDay === i ? 'on' : ''}" data-act="pday" data-i="${i}"><b>${dow(d.date)} ${dayLabel(d.date)}</b><span>${esc(ZONE_LABEL[d.where])}</span>
     <dl><dt>Amanecer</dt><dd>${fmt(s.sunrise)}</dd><dt>Dorada</dt><dd>${fmt(s.golden)}</dd><dt>Atardecer</dt><dd>${fmt(s.sunset)}</dd><dt>Azul</dt><dd>${fmt(s.blue)}</dd></dl></button>`; }).join('')}</div>
   <div class="filters"><div class="fg"><span>TIPO</span>${PHOTO_FILTERS.map((o) => `<button class="chip ${S.photoF[o] ? 'on' : ''}" data-act="pf" data-v="${o}">${o}</button>`).join('')}</div>${S.photoDay != null || f.length ? '<button class="link" data-act="pclear">Ver todos</button>' : ''}</div>
-  <div class="spots">${spots.map((s) => `<article class="spot z-${s.p.zone}"><div class="sp-time"><b>${fmt(s.t)}</b><span>${esc(s.lab)}</span><span>Día ${s.day + 1}</span></div>
-    <div><span class="kind">${esc(s.kind)}</span><h3>${esc(s.p.name)} <span class="stars">${'★'.repeat(s.stars)}</span></h3><p>${esc(s.tip)}</p>
-    <a class="link" href="${mapsUrl(s.p)}" target="_blank" rel="noopener">Ubicación ↗</a></div></article>`).join('') || '<p class="muted">Ningún spot con esos filtros.</p>'}</div>
+  <div class="spots">${spots.map((s) => `<article class="spot z-${s.p.zone}">${s.p.photo ? `<figure>${pic(s.p.photo)}</figure>` : '<figure class="empty"></figure>'}
+    <div class="sp-in"><div class="sp-time"><b>${fmt(s.t)}</b><span>${esc(s.lab)} · día ${s.day + 1}</span></div><span class="kind">${esc(s.kind)}</span><h3>${esc(s.p.name)} <span class="stars">${'●'.repeat(s.stars)}${'○'.repeat(5 - s.stars)}</span></h3><p>${esc(s.tip)}</p>
+    <a class="link small" href="${mapsUrl(s.p)}" target="_blank" rel="noopener">Ubicación</a></div></article>`).join('') || '<p class="muted">Ningún spot con esos filtros.</p>'}</div>
   <p class="small muted">El Fuego se ve mejor de noche y en la hora azul; el Volcán de Agua suele despejarse temprano y nublarse después del mediodía.</p>`;
 }
 
@@ -301,32 +283,34 @@ function rVolcano() {
   const d4 = buildDay(3), d5 = buildDay(4), got = VOLCANO.gear.filter(([g]) => S.gear[g]).length;
   const sun = sunTimes(DAYS[4].date, 'Volcán');
   return `
-  <section class="vhero">${VOLCANES('night vill')}<div class="vhero-txt"><span class="stamp">ACATENANGO</span><h1>Noche frente al Fuego,<br><em>cima al amanecer</em></h1>
-    <p class="lede">Vie 11 – sáb 12 dic. La cima del Acatenango va incluida en el tour estándar: salida a las 04:00, sol a las ${fmt(sun.sunrise)}.</p></div></section>
-  <div class="facts">${VOLCANO.facts.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>
+  <section class="vhero"><figure>${pic('fuego-dia', '', true)}</figure><div class="vhero-txt"><p class="kicker">Vie 11 – sáb 12 dic</p><h1>Acatenango</h1>
+    <p class="lede">Una noche frente al Fuego y la cima al amanecer, incluida en el tour estándar: salida 04:00, sol a las ${fmt(sun.sunrise)}.</p></div><figcaption>${esc(PHOTOS['fuego-dia'].cap)}</figcaption></section>
+  <dl class="facts">${VOLCANO.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
   <section class="grid2">
-    <div class="card"><div class="card-h"><h2>Cronología</h2></div>
-      <ol class="vt">${[...d4.rows.map((r) => [d4.dow, r]), ...d5.rows.slice(0, 4).map((r) => [d5.dow, r])].map(([dw, r]) => `<li><b>${dw} ${r.t}</b><span>${esc(r.name)}</span></li>`).join('')}
-        <li><b>${d4.dow} ${fmt(d4.sun.sunset)}</b><span>Atardecer en el campamento</span></li></ol>
-      <h3 class="sub">Antes de reservar, pregunta</h3><ul class="ask">${VOLCANO.ask.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>
-      <h3 class="sub">Estado del volcán</h3><div class="links">${VOLCANO.status.map((l) => `<a class="btn sm" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)} ↗</a>`).join('')}</div>
+    <div class="panel">${secH('01', 'Cronología')}
+      <ol class="vt">${[...d4.rows.map((r) => [0, r.start, d4.dow, r.name]), [0, d4.sun.sunset, d4.dow, 'Atardecer en el campamento'], [1, d5.sun.sunrise, d5.dow, 'Sale el sol en la cima'], ...d5.rows.slice(0, 4).map((r) => [1, r.start, d5.dow, r.name])]
+        .sort((x, y) => x[0] - y[0] || x[1] - y[1]).map(([, m, dw, name]) => `<li><b>${dw} ${fmt(m)}</b><span>${esc(name)}</span></li>`).join('')}</ol>
+      <figure class="inline-ph">${pic('sendero-bosque')}<figcaption>${esc(PHOTOS['sendero-bosque'].cap)}</figcaption></figure>
     </div>
-    <div class="card"><div class="card-h"><h2>Operadores</h2><span class="tag">PRECIO POR PERSONA</span></div>
-      <ul class="ops">${VOLCANO.ops.map((o) => `<li><div><b>${esc(o.name)}</b><span>${esc(o.note)}</span></div><em>${esc(o.price)}</em><a class="btn sm" href="${o.url}" target="_blank" rel="noopener">Ver ↗</a></li>`).join('')}</ul>
-      <p class="small muted">Precios de referencia de buscadores (2026). La cresta del Fuego no está en el plan; si te animas allá arriba cuesta Q200–300 extra en efectivo.</p>
+    <div class="panel">${secH('02', 'Operadores', '<span class="tag">Por persona</span>')}
+      <ul class="ops">${VOLCANO.ops.map((o) => `<li><div><b>${esc(o.name)}</b><span>${esc(o.note)}</span></div><em>${esc(o.price)}</em><a class="btn sm" href="${o.url}" target="_blank" rel="noopener">Ver</a></li>`).join('')}</ul>
+      <p class="small muted">Precios de referencia de buscadores (2026). La cresta del Fuego no está en el plan; si te animás allá arriba cuesta Q200–300 extra en efectivo.</p>
+      <h3 class="sub">Antes de reservar, preguntá</h3><ul class="ask">${VOLCANO.ask.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>
+      <h3 class="sub">Estado del volcán</h3><div class="links">${VOLCANO.status.map((l) => `<a class="btn sm" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>
+      <figure class="inline-ph">${pic('fuego-explosion')}<figcaption>${esc(PHOTOS['fuego-explosion'].cap)}</figcaption></figure>
     </div>
   </section>
-  <section class="card"><div class="card-h"><h2>Equipo</h2><span class="tag">${got}/${VOLCANO.gear.length} LISTO</span></div>
+  <section>${secH('03', 'Equipo', `<span class="tag">${got}/${VOLCANO.gear.length} listo</span>`)}
     <div class="gear">${VOLCANO.gear.map(([g, how]) => `<label class="${S.gear[g] ? 'done' : ''}"><input type="checkbox" data-act="gear" data-v="${esc(g)}" ${S.gear[g] ? 'checked' : ''}><span>${esc(g)}</span><em class="h-${how}">${how}</em></label>`).join('')}</div>
-    <p class="small muted">Alquilar: en Antigua por ~Q25–50 la pieza, o pídelo con el tour. Recógelo el jueves 10 en la tarde.</p></section>`;
+    <p class="small muted">Para alquilar: en Antigua cuesta ~Q25–50 la pieza, o pedilo con el tour. Recogelo el jueves 10 en la tarde.</p></section>`;
 }
 
 // ── Reservas ──
 function rBook() {
   const items = [
     { id: 'fl-out', what: 'Vuelo de ida', when: 'Mar 8', detail: `${outF().air} ${outF().code} · ${outF().dep} → ${outF().arr}`, links: FLIGHTS.book.slice(0, 2).concat(FLIGHTS.book.slice(3)) },
-    { id: 'fl-back', what: 'Vuelo de regreso', when: 'Dom 13', detail: `${backF().air} ${backF().code} · ${backF().dep} → ${backF().arr}`, links: [] },
-    ...STAYS.filter((s) => !s.included).map((s) => ({ id: 'st-' + s.night, what: 'Hospedaje · ' + s.zone, when: s.label, detail: s.picks.map((p) => p.name).join(' · '), picks: s.picks })),
+    { id: 'fl-back', what: 'Vuelo de regreso', when: 'Dom 13', detail: `${backF().air} ${backF().code} · ${backF().dep} → ${backF().arr} · se compra con la ida`, links: [] },
+    ...STAYS.filter((s) => !s.included).map((s) => ({ id: 'st-' + s.night, what: 'Hospedaje · ' + ZONE_LABEL[s.zone], when: s.label, detail: s.picks.map((p) => p.name).join(' · '), picks: s.picks })),
     { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Vie 11 – Sáb 12', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) },
     { id: 'sh-1', what: 'Shuttle Antigua → San Juan La Laguna', when: 'Mié 9 · 08:00', detail: '~$22 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttlesj.book }] },
     { id: 'sh-2', what: 'Shuttle Panajachel → Antigua', when: 'Jue 10 · ~11:45', detail: '~$15 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttleant.book }] },
@@ -334,15 +318,15 @@ function rBook() {
   ];
   const done = items.filter((x) => S.booked[x.id]).length;
   return `
-  <div class="sec-h"><h1>Reservas</h1><span class="tag">${done}/${items.length} HECHO</span></div>
-  <p class="muted">Los links ya llevan las fechas del viaje y 1 adulto. Marca cada cosa cuando la tengas confirmada.</p>
+  ${secH('06', 'Reservas', `<span class="tag">${done}/${items.length} hecho</span>`)}
+  <p class="muted">Los links ya llevan las fechas del viaje y 1 adulto. Marcá cada cosa cuando la tengas confirmada.</p>
   <div class="book">${items.map((x) => `<article class="bitem ${S.booked[x.id] ? 'done' : ''}">
-    <label class="bcheck"><input type="checkbox" data-act="booked" data-v="${x.id}" ${S.booked[x.id] ? 'checked' : ''}><span></span></label>
+    <label class="bcheck"><input type="checkbox" data-act="booked" data-v="${x.id}" ${S.booked[x.id] ? 'checked' : ''}></label>
     <div class="bbody"><span class="bwhen">${esc(x.when)}</span><h3>${esc(x.what)}</h3><p class="muted small">${esc(x.detail)}</p>
-      ${x.picks ? `<ul class="picks">${x.picks.map((p) => `<li><div><b>${esc(p.name)}</b><span>${esc(p.kind)}</span></div><em>${esc(p.price)}</em>${p.url ? `<a class="btn sm" href="${p.url}" target="_blank" rel="noopener">Booking ↗</a>` : ''}</li>`).join('')}</ul>` : ''}
-      ${x.links && x.links.length ? `<div class="links">${x.links.map((l) => `<a class="btn sm" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)} ↗</a>`).join('')}</div>` : ''}</div></article>`).join('')}</div>
-  <section class="card"><div class="card-h"><h2>Buscar por tu cuenta</h2></div><div class="links">${STAY_SEARCH.map((l) => `<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)} ↗</a>`).join('')}</div>
-    <p class="small muted">Para Airbnb en Antigua busca dentro de las calles 1a–7a y avenidas 1a–7a: todo queda a pie. Lee las reseñas sobre ruido: los fines de semana hay fiesta en algunas cuadras.</p></section>`;
+      ${x.picks ? `<ul class="picks">${x.picks.map((p) => `<li><div><b>${esc(p.name)}</b><span>${esc(p.kind)}</span></div><em>${esc(p.price)}</em>${p.url ? `<a class="btn sm" href="${p.url}" target="_blank" rel="noopener">Booking</a>` : ''}</li>`).join('')}</ul>` : ''}
+      ${x.links && x.links.length ? `<div class="links">${x.links.map((l) => `<a class="btn sm" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>` : ''}</div></article>`).join('')}</div>
+  <section>${secH('+', 'Buscar por tu cuenta')}<div class="links">${STAY_SEARCH.map((l) => `<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>
+    <p class="small muted">Para Airbnb en Antigua buscá dentro de las calles 1a–7a y las avenidas 1a–7a: todo queda a pie. Leé las reseñas sobre ruido, porque los fines de semana hay fiesta en algunas cuadras.</p></section>`;
 }
 
 // ───────────────────────── mapa ─────────────────────────
@@ -364,9 +348,9 @@ function mountMap() {
 function drawDay(fit) {
   const D = buildDay(S.day); layer.clearLayers();
   const pts = D.rows.filter((r, k, a) => !(k > 0 && a[k - 1].id === r.id)).map((r) => [r.lat, r.lng]);
-  if (pts.length > 1) L.polyline(pts, { color: getComputedStyle(document.documentElement).getPropertyValue('--almagre').trim() || '#B5452C', weight: 3, dashArray: '6 6' }).addTo(layer);
+  if (pts.length > 1) L.polyline(pts, { color: getComputedStyle(document.documentElement).getPropertyValue('--lava').trim() || '#E8501C', weight: 3, dashArray: '6 6' }).addTo(layer);
   D.rows.forEach((r) => {
-    const icon = L.divIcon({ className: 'pin z-' + r.zone + (S.sel === r.k ? ' sel' : '') + (r.cat === 'Traslado' ? ' tr' : ''), html: '<span>' + r.num + '</span>', iconSize: [26, 26], iconAnchor: [13, 13] });
+    const icon = L.divIcon({ className: 'pin z-' + r.zone + (S.sel === r.k ? ' sel' : '') + (r.cat === 'Traslado' ? ' tr' : ''), html: '<span>' + r.num + '</span>', iconSize: [24, 24], iconAnchor: [12, 12] });
     L.marker([r.lat, r.lng], { icon }).addTo(layer).bindTooltip(r.t + ' · ' + r.name).on('click', () => set({ sel: r.k }));
   });
   if (fit && pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 16 });

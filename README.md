@@ -9,7 +9,7 @@ Planificador de un viaje en solitario desde San José (Costa Rica) a Antigua Gua
 - **Acatenango**: cronología, operadores con precio de referencia, preguntas antes de reservar, estado del volcán y lista de equipo.
 - **Reservas**: links con las fechas puestas (vuelos, Booking, Airbnb, tours, shuttles) y casillas para marcar lo reservado.
 
-Diseño: paleta de cal y adobe de las fachadas de Antigua, ocre del Arco de Santa Catalina, verde quetzal, añil y magenta de los huipiles. Tipografías Fraunces (títulos), Work Sans (texto) y Bungee como guiño a los rótulos de las camionetas. Ilustraciones SVG propias.
+Diseño: fotos propias del viaje de reconocimiento (sin EXIF ni GPS). Paleta sacada de esas fotos: azul cobalto de la hora azul, lava del Fuego, amarillo sodio del Arco, ceniza y piedra caliza. Tipografías Big Shoulders Display (títulos tipo rótulo), Source Serif 4 (texto) e IBM Plex Mono (horas y datos).
 
 Los cambios (vuelo elegido, días editados, guardados, equipo y reservas) se guardan en `localStorage`.
 
