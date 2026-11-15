@@ -107,7 +107,8 @@ const PLACES = [
   { id: 'cuevita', name: 'La Cuevita de los Urquizú', cat: 'Comida', zone: 'Antigua', addr: '2a Calle Oriente #9D', lat: 14.5596, lng: -90.7330, price: '$', dur: 60, cost: 10, desc: 'Ollas de barro con los guisos del día: escogés con el dedo y te sirven. La forma más fácil de probar todo.', hours: '09:00–21:00', tip: 'Llegá antes de las 13:00 o se acaban los mejores.' },
   { id: 'spa', name: 'Masaje post-volcán', cat: 'Spa', zone: 'Antigua', addr: 'Centro', lat: 14.5585, lng: -90.7330, price: '$$', dur: 75, cost: 30, desc: 'Las piernas lo van a pedir después de 1 600 m de desnivel. Hay decenas de spas con masaje de 60 min a precio local.', hours: '10:00–20:00', tip: 'Reservá por WhatsApp la mañana del sábado desde el volcán.' },
   { id: 'ciudadvieja', photo: 'wm-ciudadvieja', name: 'Ciudad Vieja', cat: 'Pueblo', zone: 'Antigua', addr: 'Ciudad Vieja, Sacatepéquez', lat: 14.5230, lng: -90.7700, price: 'Gratis', dur: 90, cost: 5, desc: 'La primera capital del reino, a 15 min de Antigua al pie del Volcán de Agua, arrasada por un deslave en 1541. Iglesia colonial y plaza de pueblo sin turistas.', hours: 'Todo el día', tip: 'Tuk-tuk o Uber ~Q40. Buen plan para una tarde libre.' },
-  { id: 'hotelant', name: 'Hospedaje en Antigua', cat: 'Hotel', zone: 'Antigua', addr: 'Centro histórico', lat: 14.5580, lng: -90.7335, price: '$$', dur: 30, cost: 0, desc: 'Base en el centro: todo queda a menos de 12 cuadras a pie.', hours: '', tip: 'Pedí guardar la maleta los días del lago y del volcán.' },
+  { id: 'casablanca', name: 'Airbnb Casablanca', cat: 'Hotel', zone: 'Antigua', addr: '5a Calle Poniente y Alameda de Santa Lucía', lat: 14.5566, lng: -90.7386, price: '$$', dur: 30, cost: 0, desc: 'Tu base en Antigua del martes 1 al viernes 4: a 4 cuadras del Parque Central y a una del mercado. Las noches del 1, 2 y 3 están pagadas, así que tus cosas se quedan ahí mientras dormís en el volcán.', hours: 'Check-in mar 1 · check-out vie 4', tip: 'Confirmá con el anfitrión la hora de check-in (llegás ~13:30) y si podés dejar la maleta después del check-out del viernes.' },
+  { id: 'hotelant', name: 'Hospedaje en Antigua (sáb 5)', cat: 'Hotel', zone: 'Antigua', addr: 'Centro histórico', lat: 14.5580, lng: -90.7335, price: '$$', dur: 30, cost: 0, desc: 'Base en el centro: todo queda a menos de 12 cuadras a pie.', hours: '', tip: 'Pedí guardar la maleta los días del lago y del volcán.' },
   // ── Lago Atitlán ──
   { id: 'sanjuan', photo: 'wm-sanjuan', name: 'San Juan La Laguna', cat: 'Pueblo', zone: 'Lago', addr: 'San Juan La Laguna, Sololá', lat: 14.6935, lng: -91.2860, price: 'Gratis', dur: 120, cost: 0, desc: 'Pueblo tz’utujil de calles con murales, paraguas de colores y cooperativas de mujeres que tiñen hilo con plantas.', hours: 'Todo el día', tip: 'La calle que sube del muelle es la de los murales y las sombrillas.' },
   { id: 'cooperativa', photo: 'wm-telar', name: 'Cooperativa textil · tinte natural', cat: 'Textiles', zone: 'Lago', addr: 'Calle principal, San Juan', lat: 14.6928, lng: -91.2852, price: '$', dur: 60, cost: 8, desc: 'Demostración del hilado, tinte con añil, achiote y cáscara de coco, y telar de cintura. Lo que compras va directo a la tejedora.', hours: '08:00–17:00', tip: 'La demostración es gratis o de pocos quetzales; compra algo pequeño para agradecer.' },
@@ -141,20 +142,20 @@ const BY_ID = Object.fromEntries(PLACES.map((p) => [p.id, p]));
 // Días. acts: [placeId, 'HH:MM']. where: zona del día (para el sol y el mapa). night: dónde se duerme.
 const DAYS = [
   { date: '2026-12-01', title: 'Llegada · Antigua colonial', photo: 'arco-noche', where: 'Antigua', night: 'Antigua', kind: 'LLEGADA',
-    acts: [['gua', '11:30'], ['uberin', '12:05'], ['hotelant', '13:30'], ['cuevita', '14:10'], ['arco', '15:20'], ['merced', '16:00'], ['cafesky', '16:55'], ['parque', '18:20'], ['tipico', '19:00']],
+    acts: [['gua', '11:30'], ['uberin', '12:05'], ['casablanca', '13:30'], ['cuevita', '14:10'], ['arco', '15:20'], ['merced', '16:00'], ['cafesky', '16:55'], ['parque', '18:20'], ['tipico', '19:00']],
     note: 'AV 628 aterriza 11:30. Tarifa light: solo artículo personal y mano de 10 kg, así que alquilá la ropa de frío esta tarde en Antigua: mañana a las 08:00 salís al volcán. Tomá mucha agua y evitá el alcohol para aclimatarte.',
     why: 'Llegás con hambre: guisos de barro en La Cuevita, el Arco y La Merced a pie, y la terraza de Café Sky justo para el atardecer sobre los tres volcanes que vas a subir mañana.' },
   { date: '2026-12-02', title: 'Acatenango · noche frente al Fuego', photo: 'fuego-noche', where: 'Volcán', night: 'Volcán', kind: 'VOLCÁN',
     acts: [['fernandos', '07:00'], ['tourbus', '08:00'], ['soledad', '09:00'], ['subida', '09:20'], ['campamento', '14:50']],
-    note: 'Solo tuviste una tarde para aclimatarte: subí a tu ritmo y avisá al guía si te duele la cabeza. Revisá la alerta del Fuego en CONRED / INSIVUMEH el martes; con alerta naranja o roja se cierra la ruta.',
+    note: 'Tour pagado con Adrenalina Tours (WeTravel, $95). Confirmá por WhatsApp la hora y el punto de recogida. Solo tuviste una tarde para aclimatarte: subí a tu ritmo y avisá al guía si te duele la cabeza. Revisá la alerta del Fuego en CONRED / INSIVUMEH el martes; con alerta naranja o roja se cierra la ruta.',
     why: 'El volcán va primero, con las piernas frescas y antes de cualquier cansancio. Llegás al campamento con tiempo de ver el atardecer y la lava de noche.' },
   { date: '2026-12-03', title: 'Cima al amanecer · bajada y descanso', photo: 'fuego-dia', where: 'Volcán', night: 'Antigua', kind: 'CIMA',
-    acts: [['cima', '04:00'], ['desayunocamp', '06:30'], ['bajada', '08:00'], ['tourback', '12:00'], ['hotelant', '13:00'], ['tipico', '13:40'], ['spa', '15:00'], ['parque', '17:00'], ['santodomingo', '17:45'], ['cafesky', '19:15']],
+    acts: [['cima', '04:00'], ['desayunocamp', '06:30'], ['bajada', '08:00'], ['tourback', '12:00'], ['casablanca', '13:00'], ['tipico', '13:40'], ['spa', '15:00'], ['parque', '17:00'], ['santodomingo', '17:45'], ['cafesky', '19:15']],
     note: 'La cima del Acatenango (3 976 m) va incluida en el tour. Devolvé el equipo alquilado en la tarde y dormí temprano: mañana a las 08:00 sale el shuttle al lago.',
     why: 'La recompensa del viaje al amanecer y de vuelta a Antigua para almorzar. Masaje, el Parque Central, Casa Santo Domingo y de cierre la terraza de Café Sky de noche, para ver desde abajo el resplandor del volcán donde dormiste.' },
   { date: '2026-12-04', title: 'Hacia el lago · San Juan La Laguna', photo: 'lago-cayuco', where: 'Lago', night: 'Lago', kind: 'LAGO',
     acts: [['condesa', '06:50'], ['shuttlesj', '08:00'], ['hotellago', '11:40'], ['sanjuan', '12:20'], ['cooperativa', '14:20'], ['kaqasiiwaan', '15:30'], ['muellesj', '17:05'], ['cenalago', '18:15']],
-    note: 'Dejá la maleta en el hotel de Antigua y llevá solo una mochila: vuelves mañana.',
+    note: 'Hoy es el check-out del Airbnb Casablanca, antes del shuttle de las 08:00. Si el anfitrión te guarda la maleta hasta el sábado, llevá solo una mochila al lago.',
     why: 'Después del volcán, un día suave. Shuttle directo al lado tranquilo del lago, murales y tintes naturales al mediodía y el mirador cuando la luz se vuelve dorada.' },
   { date: '2026-12-05', title: 'Mañana en el lago · vuelta a Antigua', photo: 'lancha', where: 'Lago', night: 'Antigua', kind: 'LAGO → ANTIGUA',
     acts: [['desayunolago', '07:15'], ['kayak', '08:30'], ['lanchapana', '10:00'], ['pana', '10:45'], ['shuttleant', '11:45'], ['hotelant', '15:00'], ['cruz', '15:40'], ['nimpot', '17:10'], ['tartines', '18:45']],
@@ -169,14 +170,11 @@ const DAYS = [
 
 // Hospedaje por noche (links con las fechas ya puestas).
 const STAYS = [
-  { night: '2026-12-01', out: '2026-12-02', zone: 'Antigua', label: 'Mar 1 · Antigua',
-    picks: [
-      { name: 'Ojala Antigua', kind: 'Boutique económico · desayuno', price: 'Menos de $100', url: BK('Ojala Antigua Guatemala', '2026-12-01', '2026-12-02') },
-      { name: 'Hotel La Catedral', kind: 'Casona colonial boutique', price: '~$100', url: BK('Hotel La Catedral Antigua Guatemala', '2026-12-01', '2026-12-02') },
-    ] },
-  { night: '2026-12-02', out: '2026-12-03', zone: 'Volcán', label: 'Mié 2 · Acatenango', picks: [{ name: 'Incluido en el tour', kind: 'Cabaña o tienda en el campamento', price: '', url: '' }], included: true },
-  { night: '2026-12-03', out: '2026-12-04', zone: 'Antigua', label: 'Jue 3 · Antigua',
-    picks: [{ name: 'Mismo hospedaje del día 1, si lo dejaste reservado', kind: 'Guarda la maleta ahí', price: '', url: BK('Antigua Guatemala', '2026-12-03', '2026-12-04') }] },
+  { night: '2026-12-01', out: '2026-12-02', zone: 'Antigua', label: 'Mar 1 · Antigua', booked: true,
+    picks: [{ name: 'Airbnb Casablanca', kind: '5a Calle Poniente y Alameda de Santa Lucía · check-in', price: 'Pagado', url: '' }] },
+  { night: '2026-12-02', out: '2026-12-03', zone: 'Volcán', label: 'Mié 2 · Acatenango', picks: [{ name: 'Incluido en el tour', kind: 'Cabaña o tienda en el campamento; tu Airbnb sigue pagado esta noche', price: '', url: '' }], included: true },
+  { night: '2026-12-03', out: '2026-12-04', zone: 'Antigua', label: 'Jue 3 · Antigua', booked: true,
+    picks: [{ name: 'Airbnb Casablanca', kind: 'Misma reserva · check-out el viernes 4', price: 'Pagado', url: '' }] },
   { night: '2026-12-04', out: '2026-12-05', zone: 'Lago', label: 'Vie 4 · San Juan La Laguna',
     picks: [
       { name: 'Hotel Casa Ki’iil', kind: 'Boutique en San Juan', price: '~$95', url: BK('Casa Kiiil San Juan La Laguna', '2026-12-04', '2026-12-05') },
@@ -184,11 +182,14 @@ const STAYS = [
       { name: 'Lush Atitlán (San Marcos)', kind: 'Boutique con comida incluida', price: '$80–140', url: BK('Lush Atitlan San Marcos La Laguna', '2026-12-04', '2026-12-05') },
     ] },
   { night: '2026-12-05', out: '2026-12-06', zone: 'Antigua', label: 'Sáb 5 · Antigua',
-    picks: [{ name: 'Boutique para cerrar', kind: 'La última noche, a pie del Arco', price: '$100–150', url: BK('Antigua Guatemala boutique', '2026-12-05', '2026-12-06') }] },
+    picks: [
+      { name: 'Volver a Casablanca', kind: 'Preguntale al anfitrión si tiene libre el sábado 5', price: '', url: '' },
+      { name: 'Boutique para cerrar', kind: 'La última noche, a pie del Arco', price: '$100–150', url: BK('Antigua Guatemala boutique', '2026-12-05', '2026-12-06') },
+    ] },
 ];
 const STAY_SEARCH = [
-  { name: 'Airbnb Antigua · noche del 1 dic (cambiá fechas para 3 y 5)', url: AB('Antigua-Guatemala--Guatemala', '2026-12-01', '2026-12-02') },
-  { name: 'Booking Antigua · todas las noches', url: BK('Antigua Guatemala', '2026-12-01', '2026-12-06') },
+  { name: 'Airbnb Antigua · noche del sáb 5', url: AB('Antigua-Guatemala--Guatemala', '2026-12-05', '2026-12-06') },
+  { name: 'Booking Antigua · noche del sáb 5', url: BK('Antigua Guatemala', '2026-12-05', '2026-12-06') },
   { name: 'Airbnb San Juan La Laguna · 4–5 dic', url: AB('San-Juan-La-Laguna--Guatemala', '2026-12-04', '2026-12-05') },
 ];
 
@@ -196,7 +197,7 @@ const STAY_SEARCH = [
 const VOLCANO = {
   facts: [['Cima', '3 976 m'], ['Desnivel', '~1 600 m'], ['Subida', '5–6 h'], ['Noche', '0 a −5 °C'], ['Entrada', 'Q50'], ['Fuego', '5–9 explosiones/h']],
   ops: [
-    { name: 'Adrenalina Tours', price: '$95', note: 'Precio de entrada al rango; grupos grandes.', url: 'https://www.wetravel.com/trips/acatenango-hike-overnight-adrenalina-tours-45542262' },
+    { name: 'Adrenalina Tours', price: '$95', booked: true, note: 'Reservado para el 2–3 de diciembre por WeTravel.', url: 'https://www.wetravel.com/trips/acatenango-hike-overnight-adrenalina-tours-45542262' },
     { name: 'Wicho & Charlie’s', price: '$100–130', note: 'Guías locales; mira las fechas de diciembre en su perfil.', url: 'https://www.wetravel.com/trips/acatenango-volcano-hike-2-day-tour-june-july-wicho-charlie-s-6979444993' },
     { name: 'OX Expeditions', price: '~$159', note: 'De los más reseñados; cabañas y comida buena.', url: 'https://www.google.com/search?q=OX+Expeditions+Acatenango+overnight' },
     { name: 'Old Town Outfitters', price: '$159–280', note: 'Premium, grupos chicos; caro para viajar solo.', url: 'https://www.google.com/search?q=Old+Town+Outfitters+Acatenango' },
@@ -222,7 +223,7 @@ const BUDGET = [
   { k: 'Vuelo SJO ⇄ GUA', lean: 345, comfy: 345, note: 'Pagado: Avianca AV628 / AV629, tarifa light.' },
   { k: 'Aeropuerto ⇄ Antigua', lean: 30, comfy: 84, note: 'Shuttle compartido ($15 c/u) o Uber ($42 c/u).' },
   { k: 'Lago: shuttle, lancha y shuttle', lean: 41, comfy: 41, note: '$22 + Q30 + $15.' },
-  { k: 'Acatenango con cima', lean: 112, comfy: 175, note: 'Tour $95–159 + entrada Q50 + alquiler de equipo.' },
+  { k: 'Acatenango con cima', lean: 112, comfy: 112, note: 'Pagado: Adrenalina Tours $95 + entrada Q50 + alquiler de equipo.' },
   { k: 'Antigua · 3 noches', lean: 165, comfy: 330, note: 'Airbnb ~$55 o boutique ~$110.' },
   { k: 'Lago · 1 noche', lean: 46, comfy: 95, note: 'Hotel Mercy o Casa Ki’iil.' },
   { k: 'Comida · 6 días', lean: 125, comfy: 180, note: '$20–30 diarios; comedores vs. restaurantes.' },

@@ -46,7 +46,7 @@ const SCREENS = [['overview', 'Resumen'], ['planner', 'Plan'], ['explore', 'Expl
 const hashScreen = () => { const h = location.hash.replace('#', ''); return SCREENS.some(([k]) => k === h) ? h : 'overview'; };
 const S = {
   screen: hashScreen(), day: store.day ?? 0, sel: null, filters: {}, photoF: {}, photoDay: null, mview: 'list', sat: false,
-  custom: store.order === 'volcan-primero' ? store.custom || {} : {}, savedIds: store.savedIds || [], gear: store.gear || {}, booked: { ...(store.booked || {}), ...(FLIGHTS.out.some((f) => f.booked) ? { 'fl-out': true } : {}), ...(FLIGHTS.back.some((f) => f.booked) ? { 'fl-back': true } : {}) },
+  custom: store.order === 'volcan-primero' ? store.custom || {} : {}, savedIds: store.savedIds || [], gear: store.gear || {}, booked: { ...(store.booked || {}), ...(FLIGHTS.out.some((f) => f.booked) ? { 'fl-out': true } : {}), ...(FLIGHTS.back.some((f) => f.booked) ? { 'fl-back': true } : {}), ...Object.fromEntries(STAYS.filter((s) => s.booked).map((s) => ['st-' + s.night, true])), ...(VOLCANO.ops.some((o) => o.booked) ? { acat: true } : {}) },
   out: (FLIGHTS.out.find((f) => f.booked) || {}).id || store.out || FLIGHTS.out.find((f) => f.rec).id, back: (FLIGHTS.back.find((f) => f.booked) || {}).id || store.back || FLIGHTS.back.find((f) => f.rec).id,
   plan: store.plan || 'lean', theme: store.theme || null,
 };
@@ -296,7 +296,7 @@ function rVolcano() {
       <figure class="inline-ph">${pic('sendero-bosque')}<figcaption>${esc(PHOTOS['sendero-bosque'].cap)}</figcaption></figure>
     </div>
     <div class="panel">${secH('02', 'Operadores', '<span class="tag">Por persona</span>')}
-      <ul class="ops">${VOLCANO.ops.map((o) => `<li><div><b>${esc(o.name)}</b><span>${esc(o.note)}</span></div><em>${esc(o.price)}</em><a class="btn sm" href="${o.url}" target="_blank" rel="noopener">Ver</a></li>`).join('')}</ul>
+      <ul class="ops">${VOLCANO.ops.map((o) => `<li><div><b>${esc(o.name)}${o.booked ? ' <span class="tag warn">Reservado</span>' : ''}</b><span>${esc(o.note)}</span></div><em>${esc(o.price)}</em><a class="btn sm" href="${o.url}" target="_blank" rel="noopener">Ver</a></li>`).join('')}</ul>
       <p class="small muted">Precios de referencia de buscadores (2026). La cresta del Fuego no está en el plan; si te animás allá arriba cuesta Q200–300 extra en efectivo.</p>
       <h3 class="sub">Antes de reservar, preguntá</h3><ul class="ask">${VOLCANO.ask.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>
       <h3 class="sub">Estado del volcán</h3><div class="links">${VOLCANO.status.map((l) => `<a class="btn sm" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>
@@ -314,7 +314,7 @@ function rBook() {
     { id: 'fl-out', what: 'Vuelo de ida', when: 'Mar 1', detail: `${outF().air} ${outF().code} · ${outF().dep} → ${outF().arr}`, links: FLIGHTS.book.slice(0, 2).concat(FLIGHTS.book.slice(3)) },
     { id: 'fl-back', what: 'Vuelo de regreso', when: 'Dom 6', detail: `${backF().air} ${backF().code} · ${backF().dep} → ${backF().arr}`, links: [] },
     ...STAYS.filter((s) => !s.included).map((s) => ({ id: 'st-' + s.night, what: 'Hospedaje · ' + ZONE_LABEL[s.zone], when: s.label, detail: s.picks.map((p) => p.name).join(' · '), picks: s.picks })),
-    { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) },
+    (() => { const b = VOLCANO.ops.find((o) => o.booked); return b ? { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: `Pagado: ${b.name} · ${b.price} por WeTravel. Incluye la noche en el campamento.`, links: [{ name: 'Ver la reserva en WeTravel', url: b.url }] } : { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) }; })(),
     { id: 'sh-1', what: 'Shuttle Antigua → San Juan La Laguna', when: 'Vie 4 · 08:00', detail: '~$22 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttlesj.book }] },
     { id: 'sh-2', what: 'Shuttle Panajachel → Antigua', when: 'Sáb 5 · ~11:45', detail: '~$15 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttleant.book }] },
     { id: 'gear', what: 'Alquiler de equipo para el volcán', when: 'Mar 1 tarde', detail: 'Con el operador o en tiendas de la 6a Av', links: [] },
