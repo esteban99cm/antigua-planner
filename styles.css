@@ -323,3 +323,15 @@ button.btn::after { content: none; }
 .credits li { padding: 4px 0; border-bottom: 1px solid var(--line2); }
 .credits a { color: var(--ink); }
 figure.empty { background: repeating-linear-gradient(135deg, var(--paper2) 0 8px, transparent 8px 16px); }
+
+.tourname { margin: 0 0 6px; }
+.inc { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.inc ul { margin: 0; padding-left: 18px; font-size: 14.5px; }
+.inc ul.no { color: var(--muted); }
+.towns { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.towns li { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.towns figure { aspect-ratio: 1; overflow: hidden; background: var(--paper2); } .towns img { width: 100%; height: 100%; object-fit: cover; }
+.towns h3 { margin: 2px 0 4px; } .towns p { margin: 0; font-size: 14.5px; color: var(--muted); }
+.vhero.lake h1 { color: #8FA8FF; }
+@media (max-width: 820px) { .inc { grid-template-columns: 1fr; } }
+.towns li.nophoto { grid-template-columns: 1fr; }

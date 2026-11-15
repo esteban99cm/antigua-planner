@@ -42,7 +42,7 @@ const SUN_LABEL = { sunrise: 'Amanecer', morning: 'Luz de mañana', golden: 'Hor
 // ───────────────────────── estado ─────────────────────────
 const LS = 'antiguaplan.v1';
 const store = (() => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch { return {}; } })();
-const SCREENS = [['overview', 'Resumen'], ['planner', 'Plan'], ['explore', 'Explorar'], ['photo', 'Modo foto'], ['volcano', 'Acatenango'], ['book', 'Reservas']];
+const SCREENS = [['overview', 'Resumen'], ['planner', 'Plan'], ['explore', 'Explorar'], ['volcano', 'Acatenango'], ['lake', 'Atitlán'], ['book', 'Reservas']];
 const hashScreen = () => { const h = location.hash.replace('#', ''); return SCREENS.some(([k]) => k === h) ? h : 'overview'; };
 const S = {
   screen: hashScreen(), day: store.day ?? 0, sel: null, filters: {}, photoF: {}, photoDay: null, mview: 'list', sat: false,
@@ -107,7 +107,7 @@ const pic = (k, cls = '', eager = false) => k && PHOTOS[k] ? `<img class="${cls}
 const ZONE_LABEL = { Antigua: 'Antigua', Lago: 'Atitlán', Volcán: 'Acatenango', Ruta: 'Ruta' };
 
 // ───────────────────────── render ─────────────────────────
-const MNAV = [['overview', 'Resumen', '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'], ['planner', 'Plan', '<path d="M4 5h16M4 12h16M4 19h10"/>'], ['explore', 'Explorar', '<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-4 2 2-6z"/>'], ['photo', 'Foto', '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'], ['volcano', 'Volcán', '<path d="M2 21l7-12 3 4 3-6 7 14z"/>'], ['book', 'Reservas', '<path d="M5 3h14v18l-7-4-7 4z"/>']];
+const MNAV = [['overview', 'Resumen', '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'], ['planner', 'Plan', '<path d="M4 5h16M4 12h16M4 19h10"/>'], ['explore', 'Explorar', '<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-4 2 2-6z"/>'], ['volcano', 'Volcán', '<path d="M2 21l7-12 3 4 3-6 7 14z"/>'], ['lake', 'Lago', '<path d="M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 20c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M7 11l4-7 4 7"/>'], ['book', 'Reservas', '<path d="M5 3h14v18l-7-4-7 4z"/>']];
 
 function render() {
   document.documentElement.dataset.theme = isDark() ? 'dark' : 'light';
@@ -115,7 +115,7 @@ function render() {
   $('#themeLabel').textContent = isDark() ? 'Día' : 'Noche';
   $('#nav').innerHTML = SCREENS.map(([k, l], n) => `<button data-go="${k}" class="${S.screen === k ? 'on' : ''}"><i>0${n + 1}</i>${l}</button>`).join('');
   $('#mnav').innerHTML = MNAV.map(([k, l, ic]) => `<button data-go="${k}" class="${S.screen === k ? 'on' : ''}"><svg viewBox="0 0 24 24">${ic}</svg><span>${l}</span></button>`).join('');
-  const R = { overview: rOverview, planner: rPlanner, explore: rExplore, photo: rPhoto, volcano: rVolcano, book: rBook }[S.screen];
+  const R = { overview: rOverview, planner: rPlanner, explore: rExplore, volcano: rVolcano, lake: rLake, book: rBook }[S.screen];
   $('#view').className = 'view v-' + S.screen;
   $('#view').innerHTML = R();
   if (S.screen === 'planner') mountMap();
@@ -264,30 +264,13 @@ function rExplore() {
   }).join('')}</div>`;
 }
 
-// ── Modo foto ──
-function rPhoto() {
-  const f = Object.keys(S.photoF).filter((k) => S.photoF[k]);
-  const spots = PHOTO_SPOTS.filter((s) => (S.photoDay == null || s.day === S.photoDay) && f.every((k) => s.tags.includes(k)))
-    .map((s) => { const sun = sunTimes(DAYS[s.day].date, s.where), t = s.when in sun ? sun[s.when] : toMin(s.when); return { ...s, p: BY_ID[s.id], t, lab: SUN_LABEL[s.when] || 'Hora fija' }; })
-    .sort((a, b) => a.day - b.day || a.t - b.t);
-  return `
-  ${secH('04', 'Modo foto', '<span class="muted mono small">Sol calculado por día y lugar · UTC−6</span>')}
-  <div class="suntable">${DAYS.map((d, i) => { const s = sunTimes(d.date, d.where); return `<button class="sunday ${S.photoDay === i ? 'on' : ''}" data-act="pday" data-i="${i}"><b>${dow(d.date)} ${dayLabel(d.date)}</b><span>${esc(ZONE_LABEL[d.where])}</span>
-    <dl><dt>Amanecer</dt><dd>${fmt(s.sunrise)}</dd><dt>Dorada</dt><dd>${fmt(s.golden)}</dd><dt>Atardecer</dt><dd>${fmt(s.sunset)}</dd><dt>Azul</dt><dd>${fmt(s.blue)}</dd></dl></button>`; }).join('')}</div>
-  <div class="filters"><div class="fg"><span>TIPO</span>${PHOTO_FILTERS.map((o) => `<button class="chip ${S.photoF[o] ? 'on' : ''}" data-act="pf" data-v="${o}">${o}</button>`).join('')}</div>${S.photoDay != null || f.length ? '<button class="link" data-act="pclear">Ver todos</button>' : ''}</div>
-  <div class="spots">${spots.map((s) => `<article class="spot z-${s.p.zone}">${s.p.photo ? `<figure>${pic(s.p.photo)}</figure>` : '<figure class="empty"></figure>'}
-    <div class="sp-in"><div class="sp-time"><b>${fmt(s.t)}</b><span>${esc(s.lab)} · día ${s.day + 1}</span></div><span class="kind">${esc(s.kind)}</span><h3>${esc(s.p.name)} <span class="stars">${'●'.repeat(s.stars)}${'○'.repeat(5 - s.stars)}</span></h3><p>${esc(s.tip)}</p>
-    <a class="link small" href="${mapsUrl(s.p)}" target="_blank" rel="noopener">Ubicación</a></div></article>`).join('') || '<p class="muted">Ningún spot con esos filtros.</p>'}</div>
-  <p class="small muted">El Fuego se ve mejor de noche y en la hora azul; el Volcán de Agua suele despejarse temprano y nublarse después del mediodía.</p>`;
-}
-
 // ── Acatenango ──
 function rVolcano() {
   const d4 = buildDay(1), d5 = buildDay(2), got = VOLCANO.gear.filter(([g]) => S.gear[g]).length;
   const sun = sunTimes(DAYS[2].date, 'Volcán');
   return `
   <section class="vhero"><figure>${pic('fuego-dia', '', true)}</figure><div class="vhero-txt"><p class="kicker">Mié 2 – jue 3 dic</p><h1>Acatenango</h1>
-    <p class="lede">Una noche frente al Fuego y la cima al amanecer, incluida en el tour estándar: salida 04:00, sol a las ${fmt(sun.sunrise)}.</p></div><figcaption>${esc(PHOTOS['fuego-dia'].cap)}</figcaption></section>
+    <p class="lede">Con Adrenalina Tours: recogida a las 07:00, campamento a las 14:00 y cima al amanecer (salida 04:30, sol a las ${fmt(sun.sunrise)}). De vuelta en Antigua entre 12:00 y 13:00.</p></div><figcaption>${esc(PHOTOS['fuego-dia'].cap)}</figcaption></section>
   <dl class="facts">${VOLCANO.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
   <section class="grid2">
     <div class="panel">${secH('01', 'Cronología')}
@@ -295,17 +278,56 @@ function rVolcano() {
         .sort((x, y) => x[0] - y[0] || x[1] - y[1]).map(([, m, dw, name]) => `<li><b>${dw} ${fmt(m)}</b><span>${esc(name)}</span></li>`).join('')}</ol>
       <figure class="inline-ph">${pic('sendero-bosque')}<figcaption>${esc(PHOTOS['sendero-bosque'].cap)}</figcaption></figure>
     </div>
-    <div class="panel">${secH('02', 'Operadores', '<span class="tag">Por persona</span>')}
-      <ul class="ops">${VOLCANO.ops.map((o) => `<li><div><b>${esc(o.name)}${o.booked ? ' <span class="tag warn">Reservado</span>' : ''}</b><span>${esc(o.note)}</span></div><em>${esc(o.price)}</em><a class="btn sm" href="${o.url}" target="_blank" rel="noopener">Ver</a></li>`).join('')}</ul>
-      <p class="small muted">Precios de referencia de buscadores (2026). La cresta del Fuego no está en el plan; si te animás allá arriba cuesta Q200–300 extra en efectivo.</p>
-      <h3 class="sub">Antes de reservar, preguntá</h3><ul class="ask">${VOLCANO.ask.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>
+    <div class="panel">${secH('02', 'Tu tour', '<span class="tag warn">Pagado</span>')}
+      <p class="tourname"><b>${esc(VOLCANO.tour.name)}</b> · ${esc(VOLCANO.tour.price)} por ${esc(VOLCANO.tour.via)} · mié 2 – jue 3 dic</p>
+      <div class="inc"><div><h3 class="sub">Incluye</h3><ul>${VOLCANO.tour.included.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
+        <div><h3 class="sub">No incluye</h3><ul class="no">${VOLCANO.tour.excluded.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div></div>
+      <div class="links"><a class="btn sm" href="${VOLCANO.ops.find((o) => o.booked).url}" target="_blank" rel="noopener">Tu reserva en WeTravel</a></div>
+      <h3 class="sub">Confirmá con Adrenalina por WhatsApp</h3><ul class="ask">${VOLCANO.ask.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>
       <h3 class="sub">Estado del volcán</h3><div class="links">${VOLCANO.status.map((l) => `<a class="btn sm" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>
       <figure class="inline-ph">${pic('fuego-explosion')}<figcaption>${esc(PHOTOS['fuego-explosion'].cap)}</figcaption></figure>
     </div>
   </section>
   <section>${secH('03', 'Equipo', `<span class="tag">${got}/${VOLCANO.gear.length} listo</span>`)}
     <div class="gear">${VOLCANO.gear.map(([g, how]) => `<label class="${S.gear[g] ? 'done' : ''}"><input type="checkbox" data-act="gear" data-v="${esc(g)}" ${S.gear[g] ? 'checked' : ''}><span>${esc(g)}</span><em class="h-${how}">${how}</em></label>`).join('')}</div>
-    <p class="small muted">Para alquilar: en Antigua cuesta ~Q25–50 la pieza, o pedilo con el tour. Recogelo el martes 1 en la tarde, al llegar.</p></section>`;
+    <p class="small muted">El sleeping bag lo pone Adrenalina. Lo demás se alquila en Antigua por ~Q25–50 la pieza: recogelo el martes 1 en la tarde, al llegar.</p></section>`;
+}
+
+// ── Atitlán ──
+function rLake() {
+  const d1 = buildDay(3), d2 = buildDay(4), d3 = buildDay(5);
+  const stay = STAYS.find((s) => s.zone === 'Lago');
+  return `
+  <section class="vhero lake"><figure>${pic('lago-cayuco', '', true)}</figure><div class="vhero-txt"><p class="kicker">Vie 4 – dom 6 dic</p><h1>Atitlán</h1>
+    <p class="lede">Dos noches en el lago: pueblos tz’utujiles, nadar y saltar en San Marcos, Santiago Atitlán y Rostro Maya al amanecer si te animás. El domingo salís directo al aeropuerto.</p></div><figcaption>${esc(PHOTOS['lago-cayuco'].cap)}</figcaption></section>
+  <dl class="facts">${LAKE.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+  <section class="grid2">
+    <div class="panel">${secH('01', 'Cronología')}
+      <ol class="vt">${[d1, d2, d3].flatMap((D) => D.rows.map((r) => `<li><b>${D.dow} ${r.t}</b><span>${esc(r.name)}</span></li>`)).join('')}</ol>
+      <figure class="inline-ph">${pic('rostro-maya')}<figcaption>${esc(PHOTOS['rostro-maya'].cap)}</figcaption></figure>
+    </div>
+    <div class="panel">${secH('02', 'Pueblos')}
+      <ul class="towns">${LAKE.towns.map((t) => { const p = BY_ID[t.id]; return `<li class="${p.photo ? '' : 'nophoto'}">${p.photo ? `<figure>${pic(p.photo)}</figure>` : ''}<div><span class="bwhen">${esc(t.when)}</span><h3>${esc(p.name)}</h3><p>${esc(t.why)}</p></div></li>`; }).join('')}</ul>
+      <h3 class="sub">Opcional · Rostro Maya</h3><p class="small">${esc(BY_ID.rostro.desc)} ${esc(BY_ID.rostro.tip)}</p>
+    </div>
+  </section>
+  <section class="grid2">
+    <div class="panel">${secH('03', 'Nadar y saltar')}
+      <p>${esc(BY_ID.tzankujil.desc)}</p><p class="tip">${esc(BY_ID.tzankujil.tip)}</p>
+      <div class="links"><a class="btn sm" href="${mapsUrl(BY_ID.tzankujil)}" target="_blank" rel="noopener">Cerro Tzankujil en Maps</a></div>
+      ${secH('04', 'Lanchas')}
+      <table class="btable">${LAKE.boats.map(([r, p, t]) => `<tr><td>${esc(r)}</td><td>${esc(p)}</td><td>${esc(t)}</td></tr>`).join('')}</table>
+    </div>
+    <div class="panel">${secH('05', 'Llegar y salir')}
+      <ul class="ops">
+        <li><div><b>${esc(BY_ID.shuttlesj.name)}</b><span>Vie 4 · ${esc(BY_ID.shuttlesj.hours)} · ${esc(BY_ID.shuttlesj.desc)}</span></div><em>${usd(BY_ID.shuttlesj.cost)}</em><a class="btn sm" href="${BY_ID.shuttlesj.book}" target="_blank" rel="noopener">Reservar</a></li>
+        <li><div><b>${esc(BY_ID.shuttlegua.name)}</b><span>Dom 6 · ${esc(BY_ID.shuttlegua.desc)}</span></div><em>${usd(BY_ID.shuttlegua.cost)}</em><a class="btn sm" href="${BY_ID.shuttlegua.book}" target="_blank" rel="noopener">Ver</a></li>
+      </ul>
+      <h3 class="sub">Hospedaje · ${esc(stay.label)}</h3>
+      <ul class="picks">${stay.picks.map((p) => `<li><div><b>${esc(p.name)}</b><span>${esc(p.kind)}</span></div><em>${esc(p.price)}</em>${p.url ? `<a class="btn sm" href="${p.url}" target="_blank" rel="noopener">Booking</a>` : ''}</li>`).join('')}</ul>
+      <h3 class="sub">Para tener en cuenta</h3><ul class="ask">${LAKE.tips.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+    </div>
+  </section>`;
 }
 
 // ── Reservas ──
