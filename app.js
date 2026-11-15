@@ -46,8 +46,8 @@ const SCREENS = [['overview', 'Resumen'], ['planner', 'Plan'], ['explore', 'Expl
 const hashScreen = () => { const h = location.hash.replace('#', ''); return SCREENS.some(([k]) => k === h) ? h : 'overview'; };
 const S = {
   screen: hashScreen(), day: store.day ?? 0, sel: null, filters: {}, photoF: {}, photoDay: null, mview: 'list', sat: false,
-  custom: store.custom || {}, savedIds: store.savedIds || [], gear: store.gear || {}, booked: store.booked || {},
-  out: store.out || FLIGHTS.out.find((f) => f.rec).id, back: store.back || FLIGHTS.back.find((f) => f.rec).id,
+  custom: store.custom || {}, savedIds: store.savedIds || [], gear: store.gear || {}, booked: { ...(store.booked || {}), ...(FLIGHTS.out.some((f) => f.booked) ? { 'fl-out': true } : {}) },
+  out: (FLIGHTS.out.find((f) => f.booked) || {}).id || store.out || FLIGHTS.out.find((f) => f.rec).id, back: store.back || FLIGHTS.back.find((f) => f.rec).id,
   plan: store.plan || 'lean', theme: store.theme || null,
 };
 const persist = () => { try { localStorage.setItem(LS, JSON.stringify({ day: S.day, custom: S.custom, savedIds: S.savedIds, gear: S.gear, booked: S.booked, out: S.out, back: S.back, plan: S.plan, theme: S.theme })); } catch { /* modo privado */ } };
@@ -142,7 +142,7 @@ function rOverview() {
       <h1>Antigua<br>Atitlán<br><span>Acatenango</span></h1>
       <p class="lede">Seis días entre la ciudad colonial, una noche a orillas del lago y el amanecer en la cima del Acatenango con el Fuego erupcionando debajo.</p>
       <dl class="hero-facts">
-        <div><dt>Fechas</dt><dd>15–20 dic</dd></div><div><dt>Noches</dt><dd>5</dd></div><div><dt>Cima</dt><dd>3 976 m</dd></div><div><dt>Estimado</dt><dd>${crc(crcT)}</dd></div>
+        <div><dt>Fechas</dt><dd>1–6 dic</dd></div><div><dt>Noches</dt><dd>5</dd></div><div><dt>Cima</dt><dd>3 976 m</dd></div><div><dt>Estimado</dt><dd>${crc(crcT)}</dd></div>
       </dl>
     </div>
     <figcaption>${esc(PHOTOS['fuego-noche'].cap)}</figcaption>
@@ -157,11 +157,11 @@ function rOverview() {
 
   <section class="grid2">
     <div class="panel">
-      ${secH('02', 'Vuelos', '<span class="tag warn">Por confirmar</span>')}
+      ${secH('02', 'Vuelos', '<span class="tag warn">Ida comprada · falta el regreso</span>')}
       <p class="muted small">Directos SJO ⇄ GUA, ~1 h 35, misma hora en los dos países. Volaris dejó la ruta en abril de 2026. ${esc(FLIGHTS.price)}</p>
-      <h3 class="sub">Ida · martes 15</h3>
-      <div class="flights">${FLIGHTS.out.map((f) => rFlight(f, 'out', S.out === f.id)).join('')}</div>
-      <h3 class="sub">Regreso · domingo 20</h3>
+      <h3 class="sub">Ida · martes 1</h3>
+      <div class="flights">${(FLIGHTS.out.some((f) => f.booked) ? FLIGHTS.out.filter((f) => f.booked) : FLIGHTS.out).map((f) => rFlight(f, 'out', S.out === f.id)).join('')}</div>
+      <h3 class="sub">Regreso · domingo 6</h3>
       <div class="flights">${FLIGHTS.back.map((f) => rFlight(f, 'back', S.back === f.id)).join('')}</div>
       <p class="small">Marca el vuelo que compres: el día 1 y el día 6 del plan se reacomodan solos.</p>
       <div class="links">${FLIGHTS.book.map((l) => `<a class="btn" href="${l.url}" target="_blank" rel="noopener">${esc(l.name)}</a>`).join('')}</div>
@@ -199,7 +199,7 @@ function rOverview() {
   </section>`;
 }
 const rFlight = (f, dir, on) => `<button class="flight ${on ? 'on' : ''}" data-act="flight" data-dir="${dir}" data-v="${f.id}">
-  <span class="fl-air">${esc(f.air)} ${esc(f.code)}${f.rec ? ' <i>sugerido</i>' : ''}</span>
+  <span class="fl-air">${esc(f.air)} ${esc(f.code)}${f.booked ? ' <i>comprado</i>' : f.rec ? ' <i>sugerido</i>' : ''}</span>
   <span class="fl-time">${f.dep}<em>—</em>${f.arr}</span><span class="fl-note">${esc(f.note)}</span></button>`;
 
 // ── Plan ──
@@ -286,7 +286,7 @@ function rVolcano() {
   const d4 = buildDay(3), d5 = buildDay(4), got = VOLCANO.gear.filter(([g]) => S.gear[g]).length;
   const sun = sunTimes(DAYS[4].date, 'Volcán');
   return `
-  <section class="vhero"><figure>${pic('fuego-dia', '', true)}</figure><div class="vhero-txt"><p class="kicker">Vie 18 – sáb 19 dic</p><h1>Acatenango</h1>
+  <section class="vhero"><figure>${pic('fuego-dia', '', true)}</figure><div class="vhero-txt"><p class="kicker">Vie 4 – sáb 5 dic</p><h1>Acatenango</h1>
     <p class="lede">Una noche frente al Fuego y la cima al amanecer, incluida en el tour estándar: salida 04:00, sol a las ${fmt(sun.sunrise)}.</p></div><figcaption>${esc(PHOTOS['fuego-dia'].cap)}</figcaption></section>
   <dl class="facts">${VOLCANO.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
   <section class="grid2">
@@ -305,19 +305,19 @@ function rVolcano() {
   </section>
   <section>${secH('03', 'Equipo', `<span class="tag">${got}/${VOLCANO.gear.length} listo</span>`)}
     <div class="gear">${VOLCANO.gear.map(([g, how]) => `<label class="${S.gear[g] ? 'done' : ''}"><input type="checkbox" data-act="gear" data-v="${esc(g)}" ${S.gear[g] ? 'checked' : ''}><span>${esc(g)}</span><em class="h-${how}">${how}</em></label>`).join('')}</div>
-    <p class="small muted">Para alquilar: en Antigua cuesta ~Q25–50 la pieza, o pedilo con el tour. Recogelo el jueves 17 en la tarde.</p></section>`;
+    <p class="small muted">Para alquilar: en Antigua cuesta ~Q25–50 la pieza, o pedilo con el tour. Recogelo el jueves 3 en la tarde.</p></section>`;
 }
 
 // ── Reservas ──
 function rBook() {
   const items = [
-    { id: 'fl-out', what: 'Vuelo de ida', when: 'Mar 15', detail: `${outF().air} ${outF().code} · ${outF().dep} → ${outF().arr}`, links: FLIGHTS.book.slice(0, 2).concat(FLIGHTS.book.slice(3)) },
-    { id: 'fl-back', what: 'Vuelo de regreso', when: 'Dom 20', detail: `${backF().air} ${backF().code} · ${backF().dep} → ${backF().arr} · se compra con la ida`, links: [] },
+    { id: 'fl-out', what: 'Vuelo de ida', when: 'Mar 1', detail: `${outF().air} ${outF().code} · ${outF().dep} → ${outF().arr}`, links: FLIGHTS.book.slice(0, 2).concat(FLIGHTS.book.slice(3)) },
+    { id: 'fl-back', what: 'Vuelo de regreso', when: 'Dom 6', detail: `${backF().air} ${backF().code} · ${backF().dep} → ${backF().arr} · se compra con la ida`, links: [] },
     ...STAYS.filter((s) => !s.included).map((s) => ({ id: 'st-' + s.night, what: 'Hospedaje · ' + ZONE_LABEL[s.zone], when: s.label, detail: s.picks.map((p) => p.name).join(' · '), picks: s.picks })),
-    { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Vie 18 – Sáb 19', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) },
-    { id: 'sh-1', what: 'Shuttle Antigua → San Juan La Laguna', when: 'Mié 16 · 08:00', detail: '~$22 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttlesj.book }] },
-    { id: 'sh-2', what: 'Shuttle Panajachel → Antigua', when: 'Jue 17 · ~11:45', detail: '~$15 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttleant.book }] },
-    { id: 'gear', what: 'Alquiler de equipo para el volcán', when: 'Jue 17 tarde', detail: 'Con el operador o en tiendas de la 6a Av', links: [] },
+    { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Vie 4 – Sáb 5', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) },
+    { id: 'sh-1', what: 'Shuttle Antigua → San Juan La Laguna', when: 'Mié 2 · 08:00', detail: '~$22 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttlesj.book }] },
+    { id: 'sh-2', what: 'Shuttle Panajachel → Antigua', when: 'Jue 3 · ~11:45', detail: '~$15 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttleant.book }] },
+    { id: 'gear', what: 'Alquiler de equipo para el volcán', when: 'Jue 3 tarde', detail: 'Con el operador o en tiendas de la 6a Av', links: [] },
   ];
   const done = items.filter((x) => S.booked[x.id]).length;
   return `
