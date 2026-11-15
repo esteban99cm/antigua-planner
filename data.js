@@ -219,7 +219,7 @@ const VOLCANO = {
 
 // Presupuesto. Dos escenarios en USD; total en colones con TRIP.fx.crc.
 const BUDGET = [
-  { k: 'Vuelo SJO ⇄ GUA', lean: 320, comfy: 320, note: 'Ya comprado (Avianca, tarifa light). Monto estimado: cambialo por el real en data.js.' },
+  { k: 'Vuelo SJO ⇄ GUA', lean: 345, comfy: 345, note: 'Pagado: Avianca AV628 / AV629, tarifa light.' },
   { k: 'Aeropuerto ⇄ Antigua', lean: 30, comfy: 84, note: 'Shuttle compartido ($15 c/u) o Uber ($42 c/u).' },
   { k: 'Lago: shuttle, lancha y shuttle', lean: 41, comfy: 41, note: '$22 + Q30 + $15.' },
   { k: 'Acatenango con cima', lean: 112, comfy: 175, note: 'Tour $95–159 + entrada Q50 + alquiler de equipo.' },
