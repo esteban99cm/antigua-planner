@@ -67,7 +67,7 @@ function baseActs(i) {
     const rest = D.acts.slice(3).filter(([, t]) => toMin(t) >= hotel + 30);
     return [['gua', fmt(a)], ['uberin', fmt(a + 35)], ['hotelant', fmt(hotel)], ...(a > 18 * 60 ? [] : rest)];
   }
-  if (i === DAYS.length - 1) {
+  if (i === DAYS.length - 1 && !D.fixed) {
     const dep = toMin(backF().dep);
     if (dep < 12 * 60) return [['uberout', fmt(dep - 175)], ['gua', fmt(dep - 105)]];
     const leave = dep - 200;
@@ -316,7 +316,7 @@ function rBook() {
     ...STAYS.filter((s) => !s.included).map((s) => ({ id: 'st-' + s.night, what: 'Hospedaje · ' + ZONE_LABEL[s.zone], when: s.label, detail: s.picks.map((p) => p.name).join(' · '), picks: s.picks })),
     (() => { const b = VOLCANO.ops.find((o) => o.booked); return b ? { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: `Pagado: ${b.name} · ${b.price} por WeTravel. Incluye la noche en el campamento.`, links: [{ name: 'Ver la reserva en WeTravel', url: b.url }] } : { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) }; })(),
     { id: 'sh-1', what: 'Shuttle Antigua → San Juan La Laguna', when: 'Vie 4 · 08:00', detail: '~$22 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttlesj.book }] },
-    { id: 'sh-2', what: 'Shuttle Panajachel → Antigua', when: 'Sáb 5 · ~11:45', detail: '~$15 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttleant.book }] },
+    { id: 'sh-2', what: 'Shuttle San Pedro La Laguna → aeropuerto', when: 'Dom 6 · 05:00', detail: '~$45 compartido, vía Antigua. Pedí recogida en tu hotel del lago.', links: [{ name: 'Horarios y operadores', url: BY_ID.shuttlegua.book }] },
     { id: 'gear', what: 'Alquiler de equipo para el volcán', when: 'Mar 1 tarde', detail: 'Con el operador o en tiendas de la 6a Av', links: [] },
   ];
   const done = items.filter((x) => S.booked[x.id]).length;
