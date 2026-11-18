@@ -128,7 +128,7 @@ const PLACES = [
   { id: 'campamento', photo: 'fuego-noche', name: 'Campamento frente al Fuego', cat: 'Volcán', zone: 'Volcán', addr: 'Acatenango ~3 600 m', lat: 14.4985, lng: -90.8735, price: 'Gratis', dur: 825, cost: 0, desc: 'Llegada ~14:00 a las cabañas compartidas de Adrenalina (con sleeping bag). Cena viendo erupcionar el Fuego con el atardecer de fondo; de noche la lava rueda por la ladera.', hours: '~14:00', tip: 'Abrigate antes de que se ponga el sol: la temperatura cae de golpe. Este tour no incluye la caminata a la cresta del Fuego.' },
   { id: 'cima', photo: 'fuego-explosion', name: 'Cima del Acatenango · amanecer', cat: 'Volcán', zone: 'Volcán', addr: 'Cumbre 3 976 m', lat: 14.5009, lng: -90.8764, price: 'Gratis', dur: 120, cost: 0, desc: 'Despertador a las 03:45 y salida 04:30 para la cumbre. Llegás ~06:00 para ver salir el sol detrás del Volcán de Agua, con el Fuego a tus pies.', hours: 'Salida 04:30', tip: 'Es la parte más dura: arena volcánica suelta y viento. Guantes, gorro y frontal.' },
   { id: 'desayunocamp', photo: 'fuego-dia', name: 'Desayuno en el campamento', cat: 'Volcán', zone: 'Volcán', addr: 'Campamento Acatenango', lat: 14.4985, lng: -90.8735, price: 'Gratis', dur: 60, cost: 0, desc: 'Bajás de la cima al campamento para el desayuno (incluido) mientras el Fuego sigue explotando con la luz de la mañana.', hours: '~07:00', tip: 'Empacá todo antes de desayunar para salir a tiempo.' },
-  { id: 'bajada', name: 'Bajada a La Soledad', cat: 'Caminata', zone: 'Volcán', addr: 'Sendero Acatenango', lat: 14.5010, lng: -90.8600, price: 'Gratis', dur: 180, cost: 0, desc: 'Bajada por el mismo sendero (~3 h), con las rodillas como protagonistas.', hours: '~08:00–11:00', tip: 'Los bastones salvan las rodillas en la bajada.' },
+  { id: 'bajada', name: 'Bajada a La Soledad', cat: 'Caminata', zone: 'Volcán', addr: 'Sendero Acatenango', lat: 14.5010, lng: -90.8600, price: 'Gratis', dur: 180, cost: 0, desc: 'Bajada por el mismo sendero (~3 h), con las rodillas como protagonistas.', hours: '~08:00–11:00', tip: 'Sin bastones, la bajada cansa las rodillas: en La Soledad venden palos de madera por pocos quetzales.' },
   // ── Traslados ──
   { id: 'gua', name: 'Aeropuerto La Aurora (GUA)', cat: 'Traslado', zone: 'Ruta', addr: 'Zona 13, Ciudad de Guatemala', lat: 14.5833, lng: -90.5275, price: '$$', dur: 30, cost: 0, desc: 'Migración y aduana. El Uber se pide en el nivel 2 del parqueo, no en la acera.', hours: '', tip: 'Sacá quetzales en el cajero dentro de la terminal (5B o BI).' },
   { id: 'uberin', name: 'Transporte privado aeropuerto → Antigua', cat: 'Traslado', zone: 'Ruta', addr: 'La Aurora → Airbnb Casablanca', lat: 14.5833, lng: -90.5275, price: '$$', dur: 85, cost: 55, desc: 'Pagado ($55): te esperan a la salida del aeropuerto y te dejan en el Airbnb Casablanca. ~45 km, 60–90 min según tráfico.', hours: '', tip: 'Guardá el número del conductor en WhatsApp y avisale cuando aterrices.' },
@@ -152,7 +152,7 @@ const BY_ID = Object.fromEntries(PLACES.map((p) => [p.id, p]));
 const DAYS = [
   { date: '2026-12-01', title: 'Llegada · Antigua colonial', photo: 'arco-noche', where: 'Antigua', night: 'Antigua', kind: 'LLEGADA',
     acts: [['gua', '11:30'], ['uberin', '12:05'], ['casablanca', '13:30'], ['cuevita', '14:00'], ['cruz', '15:10'], ['arco', '16:35'], ['cafesky', '17:10'], ['parque', '18:35'], ['tipico', '19:00']],
-    note: 'AV 628 aterriza 11:30. Tarifa light: solo artículo personal y mano de 10 kg, así que alquilá la ropa de frío esta tarde en Antigua: mañana a las 08:00 salís al volcán. Tomá mucha agua y evitá el alcohol para aclimatarte.',
+    note: 'AV 628 aterriza 11:30 y te recoge el transporte privado. Mañana a las 07:00 te recogen para el volcán: dejá lista esta noche la mochila con la ropa de frío. Tomá mucha agua y evitá el alcohol para aclimatarte.',
     why: 'Llegás con hambre: guisos de barro en La Cuevita, el Cerro de la Cruz (15 min de escaleras) para ver Antigua con el Volcán de Agua, el Arco y la terraza de Café Sky justo para el atardecer sobre los volcanes que vas a subir mañana. Subir al cerro también ayuda a aclimatarse.' },
   { date: '2026-12-02', title: 'Acatenango · noche frente al Fuego', photo: 'fuego-noche', where: 'Volcán', night: 'Volcán', kind: 'VOLCÁN',
     acts: [['tourbus', '07:00'], ['soledad', '09:00'], ['subida', '09:20'], ['campamento', '14:00']],
@@ -160,7 +160,7 @@ const DAYS = [
     why: 'El volcán va primero, con las piernas frescas y antes de cualquier cansancio. Llegás al campamento con tiempo de ver el atardecer y la lava de noche.' },
   { date: '2026-12-03', title: 'Cima al amanecer · bajada y descanso', photo: 'fuego-dia', where: 'Volcán', night: 'Antigua', kind: 'CIMA',
     acts: [['cima', '04:30'], ['desayunocamp', '07:00'], ['bajada', '08:00'], ['tourback', '11:15'], ['casablanca', '13:00'], ['tipico', '13:40'], ['spa', '15:00'], ['merced', '16:30'], ['parque', '17:10'], ['santodomingo', '17:45'], ['tartines', '19:15']],
-    note: 'Despertador a las 03:45 y salida a la cima a las 04:30 (incluida en el tour). Devolvé el equipo alquilado en la tarde y dormí temprano: mañana a las 08:00 sale el shuttle al lago.',
+    note: 'Despertador a las 03:45 y salida a la cima a las 04:30 (incluida en el tour). Dormí temprano: mañana a las 08:00 sale el shuttle al lago.',
     why: 'La recompensa del viaje al amanecer y de vuelta a Antigua para almorzar. Masaje, La Merced con la última luz, el Parque Central, Casa Santo Domingo y cena chapina en La Fonda de la Calle Real.' },
   { date: '2026-12-04', title: 'Hacia el lago · San Juan La Laguna', photo: 'lago-cayuco', where: 'Lago', night: 'Lago', kind: 'LAGO',
     acts: [['condesa', '06:50'], ['shuttlesj', '08:00'], ['hotellago', '11:40'], ['sanjuan', '12:20'], ['cooperativa', '14:20'], ['kaqasiiwaan', '15:30'], ['muellesj', '17:05'], ['cenalago', '18:15']],
@@ -199,17 +199,17 @@ const VOLCANO = {
     { name: 'Old Town Outfitters', price: '$159–280', note: 'Premium, grupos chicos; caro para viajar solo.', url: 'https://www.google.com/search?q=Old+Town+Outfitters+Acatenango' },
     { name: 'Comparar en GetYourGuide', price: '', note: 'Reseñas recientes y cancelación gratis.', url: 'https://www.getyourguide.com/s/?q=Acatenango&date_from=2026-12-04&date_to=2026-12-05' },
   ],
-  ask: ['Hora exacta de recogida (WeTravel dice 07:00, su web 08:00)', 'Si la recogida es en el Airbnb Casablanca', 'Qué pasa si cierran por alerta del Fuego: ¿cambio de fecha o reembolso?', 'Si alquilan chaqueta, guantes y frontal, o hay que traerlos', 'Tamaño del grupo'],
+  ask: ['Hora exacta de recogida (WeTravel dice 07:00, su web 08:00)', 'Si la recogida es en el Airbnb Casablanca', 'Qué pasa si cierran por alerta del Fuego: ¿cambio de fecha o reembolso?', 'Tamaño del grupo'],
   tour: {
     name: 'Adrenalina Tours', price: '$95', via: 'WeTravel',
     included: ['Transporte privado ida y vuelta desde Antigua', 'Guías certificados', 'Almuerzo y cena del día 1', 'Desayuno y snacks del día 2', 'Cabañas compartidas con sleeping bag', 'Entrada al parque', 'Botiquín básico'],
-    excluded: ['Desayuno del día 1', 'Agua (llevá 3–4 L)', 'Caminata a la cresta del Fuego', 'Ropa de frío, frontal y bastones', 'Propina para el guía'],
+    excluded: ['Desayuno del día 1', 'Agua (llevá 3–4 L)', 'Caminata a la cresta del Fuego', 'Ropa de frío y frontal (llevás la tuya)', 'Propina para el guía'],
   },
   gear: [
-    ['Mochila 30–40 L', 'Llevar'], ['Chaqueta de plumas o sintética', 'Alquilar'], ['Rompevientos impermeable', 'Llevar'], ['Gorro, guantes y buff', 'Alquilar'],
+    ['Mochila 30–40 L', 'Llevar'], ['Chaqueta de plumas o sintética', 'Llevar'], ['Rompevientos impermeable', 'Llevar'], ['Gorro, guantes y buff', 'Llevar'],
     ['Pantalón térmico + pantalón de montaña', 'Llevar'], ['2 pares de medias gruesas', 'Llevar'], ['Zapatos de montaña con suela', 'Llevar'],
-    ['Linterna frontal + baterías', 'Alquilar'], ['Bastones', 'Alquilar'], ['Desayuno del día 1 y 3–4 L de agua', 'Comprar'], ['Snacks dulces y salados', 'Comprar'],
-    ['Bloqueador y gafas de sol', 'Llevar'], ['Papel higiénico y bolsa de basura', 'Llevar'], ['Efectivo para la cresta, propinas y porteador (Q)', 'Llevar'],
+    ['Linterna frontal + baterías', 'Llevar'], ['Desayuno del día 1 y 3–4 L de agua', 'Comprar'], ['Snacks dulces y salados', 'Comprar'],
+    ['Bloqueador y gafas de sol', 'Llevar'], ['Papel higiénico y bolsa de basura', 'Llevar'], ['Efectivo en quetzales para propinas', 'Llevar'],
     ['Power bank', 'Llevar'], ['Ibuprofeno y curitas', 'Llevar'],
   ],
   status: [
@@ -243,7 +243,7 @@ const LAKE = {
 const BUDGET = [
   { k: 'Vuelo SJO ⇄ GUA', lean: 345, comfy: 345, note: 'Pagado: Avianca AV628 / AV629, tarifa light.' },
   { k: 'Transporte privado aeropuerto → Antigua', lean: 55, comfy: 55, note: 'Pagado.' },
-  { k: 'Acatenango con cima', lean: 105, comfy: 115, note: 'Pagado: Adrenalina Tours $95 (incluye la entrada) + alquiler de equipo.' },
+  { k: 'Acatenango con cima', lean: 95, comfy: 95, note: 'Pagado: Adrenalina Tours $95 (incluye la entrada).' },
   { k: 'Airbnb Casablanca · 3 noches', lean: 71, comfy: 71, note: 'Pagado: ₡52 000 − ₡20 000 de descuento = ₡32 000.' },
   { k: 'Shuttles Antigua → lago → aeropuerto', lean: 67, comfy: 67, note: '$22 a San Juan + $45 de San Pedro al aeropuerto.' },
   { k: 'Airbnb San Pablo La Laguna · 2 noches', lean: 91, comfy: 91, note: 'Pagado: ₡41 000.' },

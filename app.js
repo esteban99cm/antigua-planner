@@ -290,7 +290,7 @@ function rVolcano() {
   </section>
   <section>${secH('03', 'Equipo', `<span class="tag">${got}/${VOLCANO.gear.length} listo</span>`)}
     <div class="gear">${VOLCANO.gear.map(([g, how]) => `<label class="${S.gear[g] ? 'done' : ''}"><input type="checkbox" data-act="gear" data-v="${esc(g)}" ${S.gear[g] ? 'checked' : ''}><span>${esc(g)}</span><em class="h-${how}">${how}</em></label>`).join('')}</div>
-    <p class="small muted">El sleeping bag lo pone Adrenalina. Lo demás se alquila en Antigua por ~Q25–50 la pieza: recogelo el martes 1 en la tarde, al llegar.</p></section>`;
+    <p class="small muted">El sleeping bag lo pone Adrenalina; lo demás lo llevás vos. Con la tarifa light de 10 kg, viajá con la chaqueta y las botas puestas en el avión para liberar espacio.</p></section>`;
 }
 
 // ── Atitlán ──
@@ -340,7 +340,6 @@ function rBook() {
     (() => { const b = VOLCANO.ops.find((o) => o.booked); return b ? { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: `Pagado: ${b.name} · ${b.price} por WeTravel. Incluye la noche en el campamento.`, links: [{ name: 'Ver la reserva en WeTravel', url: b.url }] } : { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) }; })(),
     { id: 'sh-1', what: 'Shuttle Antigua → San Juan La Laguna', when: 'Vie 4 · 08:00', detail: '~$22 compartido', links: [{ name: 'Turisteando', url: BY_ID.shuttlesj.book }] },
     { id: 'sh-2', what: 'Shuttle San Pedro La Laguna → aeropuerto', when: 'Dom 6 · 05:00', detail: '~$45 compartido, vía Antigua. Pedí recogida en tu hotel del lago.', links: [{ name: 'Horarios y operadores', url: BY_ID.shuttlegua.book }] },
-    { id: 'gear', what: 'Alquiler de equipo para el volcán', when: 'Mar 1 tarde', detail: 'Con el operador o en tiendas de la 6a Av', links: [] },
   ];
   const done = items.filter((x) => S.booked[x.id]).length;
   return `
