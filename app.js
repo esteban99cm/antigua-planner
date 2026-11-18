@@ -46,7 +46,7 @@ const SCREENS = [['overview', 'Resumen'], ['planner', 'Plan'], ['explore', 'Expl
 const hashScreen = () => { const h = location.hash.replace('#', ''); return SCREENS.some(([k]) => k === h) ? h : 'overview'; };
 const S = {
   screen: hashScreen(), day: store.day ?? 0, sel: null, filters: {}, photoF: {}, photoDay: null, mview: 'list', sat: false,
-  custom: store.order === 'volcan-primero' ? store.custom || {} : {}, savedIds: store.savedIds || [], gear: store.gear || {}, booked: { ...(store.booked || {}), ...(FLIGHTS.out.some((f) => f.booked) ? { 'fl-out': true } : {}), ...(FLIGHTS.back.some((f) => f.booked) ? { 'fl-back': true } : {}), ...Object.fromEntries(STAYS.filter((s) => s.booked).map((s) => ['st-' + s.night, true])), ...(VOLCANO.ops.some((o) => o.booked) ? { acat: true } : {}) },
+  custom: store.order === 'volcan-primero' ? store.custom || {} : {}, savedIds: store.savedIds || [], gear: store.gear || {}, booked: { ...(store.booked || {}), ...(FLIGHTS.out.some((f) => f.booked) ? { 'fl-out': true } : {}), ...(FLIGHTS.back.some((f) => f.booked) ? { 'fl-back': true } : {}), ...Object.fromEntries(STAYS.filter((s) => s.booked).map((s) => ['st-' + s.night, true])), ...(VOLCANO.ops.some((o) => o.booked) ? { acat: true } : {}), transfer: true },
   out: (FLIGHTS.out.find((f) => f.booked) || {}).id || store.out || FLIGHTS.out.find((f) => f.rec).id, back: (FLIGHTS.back.find((f) => f.booked) || {}).id || store.back || FLIGHTS.back.find((f) => f.rec).id,
   plan: store.plan || 'lean', theme: store.theme || null,
 };
@@ -334,6 +334,7 @@ function rLake() {
 function rBook() {
   const items = [
     { id: 'fl-out', what: 'Vuelo de ida', when: 'Mar 1', detail: `${outF().air} ${outF().code} · ${outF().dep} → ${outF().arr}`, links: FLIGHTS.book.slice(0, 2).concat(FLIGHTS.book.slice(3)) },
+    { id: 'transfer', what: 'Transporte privado aeropuerto → Antigua', when: 'Mar 1 · 11:30', detail: 'Pagado: $55. Te esperan a la salida y te dejan en el Airbnb Casablanca.', links: [] },
     { id: 'fl-back', what: 'Vuelo de regreso', when: 'Dom 6', detail: `${backF().air} ${backF().code} · ${backF().dep} → ${backF().arr}`, links: [] },
     ...STAYS.filter((s) => !s.included).map((s) => ({ id: 'st-' + s.night, what: 'Hospedaje · ' + ZONE_LABEL[s.zone], when: s.label, detail: s.picks.map((p) => p.name).join(' · '), picks: s.picks })),
     (() => { const b = VOLCANO.ops.find((o) => o.booked); return b ? { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: `Pagado: ${b.name} · ${b.price} por WeTravel. Incluye la noche en el campamento.`, links: [{ name: 'Ver la reserva en WeTravel', url: b.url }] } : { id: 'acat', what: 'Tour Acatenango (cima incluida)', when: 'Mié 2 – Jue 3', detail: 'Incluye la noche en el campamento', links: VOLCANO.ops.map((o) => ({ name: o.name + (o.price ? ' · ' + o.price : ''), url: o.url })) }; })(),

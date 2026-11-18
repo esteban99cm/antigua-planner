@@ -116,7 +116,7 @@ const PLACES = [
   { id: 'kaqasiiwaan', photo: 'wm-kaqasiiwaan', name: 'Mirador Kaqasiiwaan', cat: 'Mirador', zone: 'Lago', addr: 'Sobre San Juan La Laguna', lat: 14.6965, lng: -91.2815, price: '$', dur: 75, cost: 4, desc: 'Escaleras y pasarelas de madera hasta un mirador sobre el lago con los volcanes San Pedro, Tolimán y Atitlán enfrente.', hours: '06:00–17:00', tip: '~Q30. Subí a las 15:30 para tener luz dorada sobre el lago.' },
   { id: 'muellesj', photo: 'wm-sanjuanaire', name: 'Atardecer en el muelle', cat: 'Lago', zone: 'Lago', addr: 'Muelle de San Juan', lat: 14.6942, lng: -91.2872, price: 'Gratis', dur: 45, cost: 0, desc: 'El sol se esconde detrás del Cerro Rostro Maya y el lago cambiá de color. Sin hacer nada más.', hours: '', tip: 'Una cerveza Gallo en el muelle y listo.' },
   { id: 'cenalago', name: 'Cena junto al lago', cat: 'Comida', zone: 'Lago', addr: 'San Juan / San Pedro', lat: 14.6930, lng: -91.2800, price: '$', dur: 70, cost: 12, desc: 'Pescado de lago o pepián en los comedores entre San Juan y San Pedro (5 min en tuk-tuk).', hours: '', tip: 'En San Pedro hay más vida nocturna si te quedan ganas.' },
-  { id: 'hotellago', name: 'Hospedaje en el lago (vie 4 y sáb 5)', cat: 'Hotel', zone: 'Lago', addr: 'San Juan o San Pedro La Laguna', lat: 14.6920, lng: -91.2870, price: '$$', dur: 30, cost: 0, desc: 'Una noche frente al agua para ver el amanecer sobre los volcanes.', hours: '', tip: 'Pedí habitación con vista al lago: la diferencia de precio suele ser pequeña.' },
+  { id: 'hotellago', name: 'Airbnb en San Pablo La Laguna', cat: 'Hotel', zone: 'Lago', addr: 'San Pablo La Laguna, Sololá', lat: 14.7115, lng: -91.2735, price: '$$', dur: 30, cost: 0, desc: 'Tu base en el lago del viernes 4 al domingo 6 (pagado, ₡41 000). San Pablo queda entre San Juan y San Marcos: 5–10 min en tuk-tuk a cada uno.', hours: 'Check-in vie 4 · check-out dom 6', tip: 'Pedile al anfitrión que te coordine un tuk-tuk de confianza para el domingo a las 04:30 (el shuttle sale 05:00 de San Pedro), o preguntale al shuttle si recoge en San Pablo.' },
   { id: 'rostro', photo: 'rostro-maya', name: 'Amanecer en Rostro Maya (opcional)', cat: 'Caminata', zone: 'Lago', addr: 'Cerro Rostro Maya / Indian Nose', lat: 14.7035, lng: -91.2945, price: '$', dur: 180, cost: 15, desc: 'Caminata de 45 min en la oscuridad hasta la cima que ve todo el lago al amanecer. La mejor foto de Atitlán.', hours: 'Salida 04:15', tip: 'Con guía local desde San Juan o San Pedro (~Q120–150 con transporte). Es opcional: si preferís dormir, el amanecer desde el muelle también es enorme.' },
   { id: 'desayunolago', photo: 'wm-desayunosj', name: 'Desayuno con vista', cat: 'Café', zone: 'Lago', addr: 'San Juan La Laguna', lat: 14.6938, lng: -91.2858, price: '$', dur: 60, cost: 8, desc: 'Café de los cafetales de San Juan, que se cultiva en las faldas del volcán San Pedro.', hours: '', tip: 'La cooperativa de café ofrece tour corto de la planta a la taza.' },
   { id: 'kayak', photo: 'lago-cayuco', name: 'Kayak en el lago', cat: 'Lago', zone: 'Lago', addr: 'Muelle de San Juan / San Pedro', lat: 14.6905, lng: -91.2780, price: '$', dur: 60, cost: 8, desc: 'El lago está como espejo antes de las 11:00, cuando entra el viento Xocomil.', hours: '07:00–11:00', tip: 'Q50–75 la hora. Remá temprano; después del mediodía hay oleaje.' },
@@ -131,9 +131,9 @@ const PLACES = [
   { id: 'bajada', name: 'Bajada a La Soledad', cat: 'Caminata', zone: 'Volcán', addr: 'Sendero Acatenango', lat: 14.5010, lng: -90.8600, price: 'Gratis', dur: 180, cost: 0, desc: 'Bajada por el mismo sendero (~3 h), con las rodillas como protagonistas.', hours: '~08:00–11:00', tip: 'Los bastones salvan las rodillas en la bajada.' },
   // ── Traslados ──
   { id: 'gua', name: 'Aeropuerto La Aurora (GUA)', cat: 'Traslado', zone: 'Ruta', addr: 'Zona 13, Ciudad de Guatemala', lat: 14.5833, lng: -90.5275, price: '$$', dur: 30, cost: 0, desc: 'Migración y aduana. El Uber se pide en el nivel 2 del parqueo, no en la acera.', hours: '', tip: 'Sacá quetzales en el cajero dentro de la terminal (5B o BI).' },
-  { id: 'uberin', name: 'Uber aeropuerto → Antigua', cat: 'Traslado', zone: 'Ruta', addr: 'CA-1 / RN-10', lat: 14.5833, lng: -90.5275, price: '$$', dur: 85, cost: 42, desc: '~45 km, 60–90 min según tráfico. UberX ~Q320; sube con lluvia o en hora pico.', hours: '', tip: 'Alternativa: shuttle compartido ~$12–15.' },
+  { id: 'uberin', name: 'Transporte privado aeropuerto → Antigua', cat: 'Traslado', zone: 'Ruta', addr: 'La Aurora → Airbnb Casablanca', lat: 14.5833, lng: -90.5275, price: '$$', dur: 85, cost: 55, desc: 'Pagado ($55): te esperan a la salida del aeropuerto y te dejan en el Airbnb Casablanca. ~45 km, 60–90 min según tráfico.', hours: '', tip: 'Guardá el número del conductor en WhatsApp y avisale cuando aterrices.' },
   { id: 'shuttlesj', name: 'Shuttle Antigua → San Juan La Laguna', cat: 'Traslado', zone: 'Ruta', addr: 'Recogida en el hotel', lat: 14.5580, lng: -90.7335, price: '$', dur: 210, cost: 22, desc: 'Shuttle compartido directo al lado oeste del lago (~3–3,5 h con la parada técnica).', hours: 'Salida ~08:00', tip: 'Llevá una chaqueta: el altiplano de Sololá es frío por la mañana.', book: 'https://turisteando.wetravel.com/trips/shuttle-from-antigua-guatemala-to-san-juan-la-laguna-turisteando-8726964966' },
-  { id: 'lanchasm', photo: 'lancha', name: 'Lancha San Juan → San Marcos', cat: 'Traslado', zone: 'Lago', addr: 'Muelle de San Juan', lat: 14.6942, lng: -91.2872, price: '$', dur: 20, cost: 2, desc: 'Lancha pública por la orilla norte del lago (~Q15). Salen cuando se llenan.', hours: '06:30–17:00', tip: 'Sentate atrás si no te querés mojar.' },
+  { id: 'lanchasm', name: 'Tuk-tuk San Pablo → San Marcos', cat: 'Traslado', zone: 'Lago', addr: 'San Pablo La Laguna', lat: 14.7115, lng: -91.2735, price: '$', dur: 10, cost: 2, desc: 'Del Airbnb a San Marcos en tuk-tuk (~Q10–15, 5–10 min).', hours: '', tip: 'Acordá el precio antes de subir.' },
   { id: 'tzankujil', name: 'Cerro Tzankujil · nadar y saltar', cat: 'Lago', zone: 'Lago', addr: 'Reserva Natural Cerro Tzankujil, San Marcos La Laguna', lat: 14.7228, lng: -91.2614, price: '$', dur: 120, cost: 3, desc: 'Reserva natural en una península de San Marcos con senderos, rocas para meterse al lago y una plataforma de madera para saltar al agua desde unos 10 m. El agua es fresca y clarísima en la mañana.', hours: '~08:00–17:00', tip: 'Entrada ~Q20 en efectivo (confirmalo en la puerta). Llevá traje de baño, toalla y sandalias; probá primero desde las rocas bajas y saltá con los pies por delante.' },
   { id: 'sanmarcos', name: 'San Marcos La Laguna', cat: 'Pueblo', zone: 'Lago', addr: 'San Marcos La Laguna, Sololá', lat: 14.7240, lng: -91.2600, price: 'Gratis', dur: 30, cost: 0, desc: 'El pueblo más tranquilo del lago: callejones entre árboles, cafés y centros de yoga.', hours: '', tip: 'Buen lugar para un jugo o un café antes de seguir.' },
   { id: 'lanchasp', name: 'Lancha San Marcos → San Pedro → Santiago', cat: 'Traslado', zone: 'Lago', addr: 'Muelle de San Marcos', lat: 14.7215, lng: -91.2590, price: '$', dur: 50, cost: 5, desc: 'Lancha a San Pedro (~Q10) y desde ahí la que cruza a Santiago Atitlán (~Q25), unos 25 min.', hours: '', tip: 'En San Pedro las lanchas a Santiago salen del muelle principal, no del de San Juan.' },
@@ -164,15 +164,15 @@ const DAYS = [
     why: 'La recompensa del viaje al amanecer y de vuelta a Antigua para almorzar. Masaje, La Merced con la última luz, el Parque Central, Casa Santo Domingo y cena chapina en La Fonda de la Calle Real.' },
   { date: '2026-12-04', title: 'Hacia el lago · San Juan La Laguna', photo: 'lago-cayuco', where: 'Lago', night: 'Lago', kind: 'LAGO',
     acts: [['condesa', '06:50'], ['shuttlesj', '08:00'], ['hotellago', '11:40'], ['sanjuan', '12:20'], ['cooperativa', '14:20'], ['kaqasiiwaan', '15:30'], ['muellesj', '17:05'], ['cenalago', '18:15']],
-    note: 'Check-out del Airbnb Casablanca antes del shuttle de las 08:00. Llevate todo: ya no volvés a Antigua, el domingo salís del lago directo al aeropuerto.',
+    note: 'Check-out del Airbnb Casablanca antes del shuttle de las 08:00. Pedile al shuttle que te deje en San Pablo La Laguna (o bajate en San Juan y tomá un tuk-tuk de 5 min). Llevate todo: el domingo salís del lago directo al aeropuerto.',
     why: 'Después del volcán, un día suave. Shuttle directo a San Juan, murales y tintes naturales al mediodía y el mirador Kaqasiiwaan cuando la luz se vuelve dorada.' },
   { date: '2026-12-05', title: 'Pueblos del lago · nadar y saltar', photo: 'rostro-maya', where: 'Lago', night: 'Lago', kind: 'LAGO',
-    acts: [['desayunolago', '07:45'], ['lanchasm', '08:45'], ['tzankujil', '09:10'], ['sanmarcos', '11:15'], ['lanchasp', '11:50'], ['santiago', '12:45'], ['lanchast', '15:10'], ['sanpedro', '15:45'], ['cenalago', '18:00']],
-    note: 'Opcional: amanecer en Rostro Maya (la "cabeza maya"), salida 04:15 con guía y vuelta ~07:30, a tiempo para desayunar. Esta noche dormí temprano: el shuttle al aeropuerto sale a las 05:00.',
+    acts: [['desayunolago', '07:45'], ['lanchasm', '08:55'], ['tzankujil', '09:10'], ['sanmarcos', '11:15'], ['lanchasp', '11:50'], ['santiago', '12:45'], ['lanchast', '15:10'], ['sanpedro', '15:45'], ['cenalago', '18:00']],
+    note: 'Opcional: amanecer en Rostro Maya (la "cabeza maya"), salida ~04:15 con guía (pedí que te recojan en San Pablo) y vuelta ~07:30. Después de cenar en San Pedro, tuk-tuk de vuelta a San Pablo (~15 min, Q25–30 de noche) y a dormir temprano: el shuttle sale a las 05:00.',
     why: 'Al lago te metés en la mañana, cuando el agua está quieta: Cerro Tzankujil en San Marcos, con la plataforma para saltar. Después cruzás a Santiago Atitlán para el mercado y Maximón, y terminás en San Pedro viendo el atardecer cerca de donde sale el shuttle mañana.' },
   { date: '2026-12-06', title: 'Salida · Atitlán → aeropuerto → SJO', photo: 'avion-volcanes', where: 'Lago', night: '—', kind: 'SALIDA', fixed: true,
     acts: [['shuttlegua', '05:00'], ['gua', '09:30']],
-    note: 'Shuttle compartido de las 05:00 desde San Pedro, vía Antigua (~4–4,5 h). AV 629 sale a las 12:25 y aterriza en SJO a las 13:55: llegás con casi 3 h de margen.',
+    note: 'Tuk-tuk 04:30 de San Pablo a San Pedro y shuttle compartido de las 05:00, vía Antigua (~4–4,5 h). AV 629 sale a las 12:25 y aterriza en SJO a las 13:55: llegás con casi 3 h de margen.',
     why: 'Salir temprano es la única forma segura desde el lago: el shuttle de las 08:30 llegaría muy justo para un vuelo de las 12:25.' },
 ];
 
@@ -180,19 +180,14 @@ const DAYS = [
 const STAYS = [
   { night: '2026-12-01', out: '2026-12-02', zone: 'Antigua', label: 'Mar 1 · Antigua', booked: true,
     picks: [{ name: 'Airbnb Casablanca', kind: '5a Calle Poniente y Alameda de Santa Lucía · check-in', price: 'Pagado', url: '' }] },
-  { night: '2026-12-02', out: '2026-12-03', zone: 'Volcán', label: 'Mié 2 · Acatenango', picks: [{ name: 'Incluido en el tour', kind: 'Cabaña o tienda en el campamento; tu Airbnb sigue pagado esta noche', price: '', url: '' }], included: true },
+  { night: '2026-12-02', out: '2026-12-03', zone: 'Volcán', label: 'Mié 2 · Acatenango', picks: [{ name: 'Incluido en el tour', kind: 'Cabaña compartida de Adrenalina; tu Airbnb sigue pagado esta noche', price: '', url: '' }], included: true },
   { night: '2026-12-03', out: '2026-12-04', zone: 'Antigua', label: 'Jue 3 · Antigua', booked: true,
     picks: [{ name: 'Airbnb Casablanca', kind: 'Misma reserva · check-out el viernes 4', price: 'Pagado', url: '' }] },
-  { night: '2026-12-04', out: '2026-12-06', zone: 'Lago', label: 'Vie 4 y sáb 5 · Lago Atitlán (2 noches)',
-    picks: [
-      { name: 'Hotel Casa Ki’iil (San Juan)', kind: 'Boutique; pedí que te coordinen el tuk-tuk de las 04:40 del domingo', price: '~$95/noche', url: BK('Casa Kiiil San Juan La Laguna', '2026-12-04', '2026-12-06') },
-      { name: 'Hotel Mercy (San Juan)', kind: 'Sencillo, junto al muelle', price: '~$46/noche', url: BK('Hotel Mercy San Juan La Laguna', '2026-12-04', '2026-12-06') },
-      { name: 'Buscar en San Pedro La Laguna', kind: 'Lo más práctico para el shuttle de las 05:00', price: '', url: BK('San Pedro La Laguna', '2026-12-04', '2026-12-06') },
-    ] },
+  { night: '2026-12-04', out: '2026-12-06', zone: 'Lago', label: 'Vie 4 y sáb 5 · San Pablo La Laguna', booked: true,
+    picks: [{ name: 'Airbnb en San Pablo La Laguna', kind: '2 noches · check-out el domingo 6 de madrugada', price: 'Pagado', url: '' }] },
 ];
 const STAY_SEARCH = [
-      { name: 'Airbnb San Juan La Laguna · 4–6 dic', url: AB('San-Juan-La-Laguna--Guatemala', '2026-12-04', '2026-12-06') },
-];
+      ];
 
 // Acatenango: operadores con precio de referencia (buscadores, mayo–nov 2026). La cima del Acatenango va incluida.
 const VOLCANO = {
@@ -226,14 +221,15 @@ const VOLCANO = {
 
 // Lago Atitlán: datos para la pestaña Lago.
 const LAKE = {
-  facts: [['Noches', '2'], ['Altura', '1 560 m'], ['Profundidad', '~340 m'], ['Agua', '~19–21 °C'], ['Lanchas', 'Q10–25'], ['Viento', 'Desde ~11:00']],
+  facts: [['Base', 'San Pablo'], ['Noches', '2'], ['Altura', '1 560 m'], ['Agua', '~19–21 °C'], ['Lanchas', 'Q10–25'], ['Viento', 'Desde ~11:00']],
   towns: [
+    { id: 'hotellago', when: 'Base', why: 'Pueblo pequeño y tranquilo entre San Juan y San Marcos, donde dormís las dos noches.' },
     { id: 'sanjuan', when: 'Vie 4', why: 'Tu primera tarde: murales, cooperativas de tejido y el mirador Kaqasiiwaan.' },
     { id: 'sanmarcos', when: 'Sáb 5', why: 'Cerro Tzankujil para nadar y saltar desde la plataforma.' },
     { id: 'santiago', when: 'Sáb 5', why: 'El pueblo más grande: mercado, iglesia colonial y Maximón.' },
     { id: 'sanpedro', when: 'Sáb 5', why: 'Atardecer, cena y de aquí sale el shuttle del domingo.' },
   ],
-  boats: [['San Juan → San Marcos', '~Q15', '20 min'], ['San Marcos → San Pedro', '~Q10', '15 min'], ['San Pedro → Santiago', '~Q25', '25 min'], ['Santiago → San Pedro', '~Q25', '25 min'], ['San Pedro ⇄ San Juan', 'Tuk-tuk Q5–10', '5 min']],
+  boats: [['Tuk-tuk San Pablo → San Juan', '~Q10', '5–10 min'], ['Tuk-tuk San Pablo → San Marcos', '~Q10–15', '5–10 min'], ['San Marcos → San Pedro', '~Q10', '15 min'], ['San Pedro → Santiago', '~Q25', '25 min'], ['Santiago → San Pedro', '~Q25', '25 min'], ['Tuk-tuk San Pedro → San Pablo', '~Q25–30 de noche', '15 min']],
   tips: [
     'Las lanchas públicas salen cuando se llenan, de ~06:30 a ~17:00. No te quedés lejos después de las 16:30.',
     'El viento Xocomil entra cerca del mediodía y pica el lago: nadá y remá en la mañana.',
@@ -246,12 +242,12 @@ const LAKE = {
 // Presupuesto. Dos escenarios en USD; total en colones con TRIP.fx.crc.
 const BUDGET = [
   { k: 'Vuelo SJO ⇄ GUA', lean: 345, comfy: 345, note: 'Pagado: Avianca AV628 / AV629, tarifa light.' },
-  { k: 'Aeropuerto → Antigua (mar 1)', lean: 15, comfy: 42, note: 'Shuttle compartido o Uber.' },
+  { k: 'Transporte privado aeropuerto → Antigua', lean: 55, comfy: 55, note: 'Pagado.' },
   { k: 'Acatenango con cima', lean: 105, comfy: 115, note: 'Pagado: Adrenalina Tours $95 (incluye la entrada) + alquiler de equipo.' },
-  { k: 'Airbnb Casablanca · 3 noches', lean: 122, comfy: 122, note: 'Pagado: ₡55 000 (1–4 dic).' },
+  { k: 'Airbnb Casablanca · 3 noches', lean: 71, comfy: 71, note: 'Pagado: ₡52 000 − ₡20 000 de descuento = ₡32 000.' },
   { k: 'Shuttles Antigua → lago → aeropuerto', lean: 67, comfy: 67, note: '$22 a San Juan + $45 de San Pedro al aeropuerto.' },
-  { k: 'Lago · 2 noches', lean: 92, comfy: 190, note: 'Hotel Mercy (~$46) o Casa Ki’iil (~$95) por noche.' },
-  { k: 'Lanchas, Tzankujil y Rostro Maya', lean: 13, comfy: 33, note: 'Lanchas ~Q75 + entrada ~Q20; Rostro Maya opcional ~$20.' },
+  { k: 'Airbnb San Pablo La Laguna · 2 noches', lean: 91, comfy: 91, note: 'Pagado: ₡41 000.' },
+  { k: 'Tuk-tuks, lanchas, Tzankujil y Rostro Maya', lean: 17, comfy: 37, note: 'Tuk-tuks y lanchas ~Q110 + entrada ~Q20; Rostro Maya opcional ~$20.' },
   { k: 'Comida · 6 días', lean: 125, comfy: 180, note: '$20–30 diarios; comedores vs. restaurantes.' },
   { k: 'Entradas, propinas, SIM', lean: 30, comfy: 50, note: 'Santo Domingo, Kaqasiiwaan, Maximón, guía del volcán, eSIM.' },
   { k: 'Imprevistos', lean: 20, comfy: 40, note: '' },
